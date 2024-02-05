@@ -22,7 +22,7 @@
   "CreateTests": false,
   "Properties": [
     {
-      "Id": "d39752bd-05fb-4305-9910-f99f1837fddb",
+      "Id": "a6add230-545e-4265-9964-34f5bc31bc44",
       "Name": "Name",
       "Type": "string",
       "EnumType": "",
@@ -34,8 +34,8 @@
       "IsRequired": true,
       "AllowEmptyStrings": false,
       "IsTextArea": false,
-      "MinLength": null,
-      "MaxLength": null,
+      "MinLength": 1,
+      "MaxLength": 64,
       "SortOrder": 0,
       "SortType": 0,
       "Regex": "",
@@ -49,7 +49,7 @@
       "OrdinalIndex": 0
     },
     {
-      "Id": "059589aa-3a61-4263-b6da-51e82cfd1fa8",
+      "Id": "08a1b99b-3f56-4b8e-b087-c8de4add4249",
       "Name": "Identifier",
       "Type": "string",
       "EnumType": "",
@@ -61,8 +61,8 @@
       "IsRequired": true,
       "AllowEmptyStrings": false,
       "IsTextArea": false,
-      "MinLength": null,
-      "MaxLength": null,
+      "MinLength": 1,
+      "MaxLength": 256,
       "SortOrder": 0,
       "SortType": 0,
       "Regex": "",
@@ -76,7 +76,7 @@
       "OrdinalIndex": 0
     },
     {
-      "Id": "d8e74c12-a8be-4621-a41d-2384f7413460",
+      "Id": "bb15fc3e-6282-4723-9498-12a2979a2e68",
       "Name": "IpAddress",
       "Type": "string",
       "EnumType": "",
@@ -89,7 +89,7 @@
       "AllowEmptyStrings": false,
       "IsTextArea": false,
       "MinLength": null,
-      "MaxLength": null,
+      "MaxLength": 64,
       "SortOrder": 0,
       "SortType": 0,
       "Regex": "",
@@ -157,7 +157,7 @@
       "OrdinalIndex": 0
     },
     {
-      "Id": "661b5aa3-2f21-4f05-ab15-4ce57203730b",
+      "Id": "a948cfb6-7d3a-4e94-95eb-8a916b07a1d7",
       "Name": "BanUntil",
       "Type": "DateTime",
       "EnumType": "",
