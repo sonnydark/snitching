@@ -1,10 +1,10 @@
 {
-  "Id": "50baef91-ac34-498c-9623-f3d8ea56a5fc",
-  "Name": "ActivityRecord",
-  "OriginalName": "ActivityRecord",
-  "NamePlural": "ActivityRecords",
-  "DatabaseTableName": "ActivityRecords",
-  "Namespace": "ActivityRecords",
+  "Id": "b7340b4e-22c7-4558-8dd4-99426ae61339",
+  "Name": "SnitchingLog",
+  "OriginalName": "SnitchingLog",
+  "NamePlural": "SnitchingLogs",
+  "DatabaseTableName": "SnitchingLogs",
+  "Namespace": "SnitchingLogs",
   "Type": 2,
   "MasterEntityName": "SupervisedComputer.cs",
   "MasterEntity": {
@@ -486,8 +486,8 @@
   "CreateTests": false,
   "Properties": [
     {
-      "Id": "51ad19cc-1d47-4d8d-b3bb-91199a9d8ecc",
-      "Name": "StartTime",
+      "Id": "0472c8e3-14ca-4a27-bee2-3f65da58d7d5",
+      "Name": "Timestamp",
       "Type": "DateTime",
       "EnumType": "",
       "EnumNamespace": "",
@@ -513,15 +513,15 @@
       "OrdinalIndex": 0
     },
     {
-      "Id": "ed531e70-0eff-4ca7-9787-e613ba8d79e4",
-      "Name": "EndTime",
-      "Type": "DateTime",
+      "Id": "c937dc85-3504-4ca3-837e-8bcf3fac0fe9",
+      "Name": "Message",
+      "Type": "string",
       "EnumType": "",
       "EnumNamespace": "",
       "EnumAngularImport": "shared/enums",
       "EnumFilePath": null,
       "DefaultValue": null,
-      "IsNullable": true,
+      "IsNullable": false,
       "IsRequired": false,
       "AllowEmptyStrings": false,
       "IsTextArea": false,
@@ -543,5 +543,5 @@
   "NavigationProperties": [],
   "NavigationConnections": [],
   "ChildEntities": [],
-  "PhysicalFileName": "ActivityRecord.json"
+  "PhysicalFileName": "SnitchingLog.json"
 }
