@@ -252,16 +252,16 @@ paket-files/
 *.sln.iml
 
 # SnitcherPortal
-src/SnitcherPortal.Web/Logs/*
-src/SnitcherPortal.Web.Host/Logs/*
-src/SnitcherPortal.Web.Public/Logs/*
-src/SnitcherPortal.Web.Public.Host/Logs/*
-src/SnitcherPortal.AuthServer/Logs/*
-src/SnitcherPortal.HttpApi.Host/Logs/*
-src/SnitcherPortal.HttpApi.HostWithIds/Logs/*
-src/SnitcherPortal.DbMigrator/Logs/*
-src/SnitcherPortal.Blazor/Logs/*
-src/SnitcherPortal.Blazor.Tiered/Logs/*
+SnitcherPortal/src/SnitcherPortal.Web/Logs/*
+SnitcherPortal/src/SnitcherPortal.Web.Host/Logs/*
+SnitcherPortal/src/SnitcherPortal.Web.Public/Logs/*
+SnitcherPortal/src/SnitcherPortal.Web.Public.Host/Logs/*
+SnitcherPortal/src/SnitcherPortal.AuthServer/Logs/*
+SnitcherPortal/src/SnitcherPortal.HttpApi.Host/Logs/*
+SnitcherPortal/src/SnitcherPortal.HttpApi.HostWithIds/Logs/*
+SnitcherPortal/src/SnitcherPortal.DbMigrator/Logs/*
+SnitcherPortal/src/SnitcherPortal.Blazor/Logs/*
+SnitcherPortal/src/SnitcherPortal.Blazor.Tiered/Logs/*
 
 # Use abp install-libs to restore.
 **/wwwroot/libs/*
