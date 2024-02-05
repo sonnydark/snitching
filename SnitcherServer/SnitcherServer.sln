@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.7.34302.85
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SnitcherServer", "SnitcherServer\SnitcherServer.csproj", "{AD79DCB8-DAA9-404F-ADD3-26328D350122}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{AD79DCB8-DAA9-404F-ADD3-26328D350122}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AD79DCB8-DAA9-404F-ADD3-26328D350122}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AD79DCB8-DAA9-404F-ADD3-26328D350122}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AD79DCB8-DAA9-404F-ADD3-26328D350122}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {FD56F3C9-C56B-44E6-B827-E1C45D052F11}
+	EndGlobalSection
+EndGlobal
