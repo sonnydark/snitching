@@ -20,7 +20,7 @@ namespace SnitcherPortal.SupervisedComputers
         }
 
         public virtual async Task<SupervisedComputer> CreateAsync(
-        string name, string identifier, bool isCalendarActive, string? ipAddress = null, string? calendar = null, DateTime? banUntil = null)
+        string name, string identifier, bool isCalendarActive, string? ipAddress = null, DateTime? banUntil = null)
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
             Check.Length(name, nameof(name), SupervisedComputerConsts.NameMaxLength, SupervisedComputerConsts.NameMinLength);
@@ -30,7 +30,7 @@ namespace SnitcherPortal.SupervisedComputers
 
             var supervisedComputer = new SupervisedComputer(
              GuidGenerator.Create(),
-             name, identifier, isCalendarActive, ipAddress, calendar, banUntil
+             name, identifier, isCalendarActive, ipAddress, banUntil
              );
 
             return await _supervisedComputerRepository.InsertAsync(supervisedComputer);
@@ -38,7 +38,7 @@ namespace SnitcherPortal.SupervisedComputers
 
         public virtual async Task<SupervisedComputer> UpdateAsync(
             Guid id,
-            string name, string identifier, bool isCalendarActive, string? ipAddress = null, string? calendar = null, DateTime? banUntil = null, [CanBeNull] string? concurrencyStamp = null
+            string name, string identifier, bool isCalendarActive, string? ipAddress = null, DateTime? banUntil = null, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
@@ -53,7 +53,6 @@ namespace SnitcherPortal.SupervisedComputers
             supervisedComputer.Identifier = identifier;
             supervisedComputer.IsCalendarActive = isCalendarActive;
             supervisedComputer.IpAddress = ipAddress;
-            supervisedComputer.Calendar = calendar;
             supervisedComputer.BanUntil = banUntil;
 
             supervisedComputer.SetConcurrencyStampIfNotNull(concurrencyStamp);

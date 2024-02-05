@@ -1,3 +1,5 @@
+using SnitcherPortal.KnownProcesses;
+using SnitcherPortal.Calendars;
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.ActivityRecords;
 using SnitcherPortal.SupervisedComputers;
@@ -57,6 +59,10 @@ public class SnitcherPortalEntityFrameworkCoreModule : AbpModule
             options.AddRepository<ActivityRecord, ActivityRecords.EfCoreActivityRecordRepository>();
 
             options.AddRepository<SnitchingLog, SnitchingLogs.EfCoreSnitchingLogRepository>();
+
+            options.AddRepository<Calendar, Calendars.EfCoreCalendarRepository>();
+
+            options.AddRepository<KnownProcess, KnownProcesses.EfCoreKnownProcessRepository>();
 
         });
 

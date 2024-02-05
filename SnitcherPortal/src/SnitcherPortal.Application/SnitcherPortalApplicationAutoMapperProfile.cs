@@ -1,3 +1,5 @@
+using SnitcherPortal.KnownProcesses;
+using SnitcherPortal.Calendars;
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.ActivityRecords;
 using System;
@@ -21,5 +23,11 @@ public class SnitcherPortalApplicationAutoMapperProfile : Profile
         CreateMap<ActivityRecord, ActivityRecordDto>();
 
         CreateMap<SnitchingLog, SnitchingLogDto>();
+
+        CreateMap<SupervisedComputer, SupervisedComputerDto>().Ignore(x => x.SnitchingLogs).Ignore(x => x.ActivityRecords);
+
+        CreateMap<Calendar, CalendarDto>();
+
+        CreateMap<KnownProcess, KnownProcessDto>();
     }
 }

@@ -11,7 +11,6 @@ namespace SnitcherPortal.SupervisedComputers
         public string? Name { get; set; }
         public string? Identifier { get; set; }
         public string? IpAddress { get; set; }
-        public string? Calendar { get; set; }
         public bool? IsCalendarActive { get; set; }
         public DateTime? BanUntilMin { get; set; }
         public DateTime? BanUntilMax { get; set; }

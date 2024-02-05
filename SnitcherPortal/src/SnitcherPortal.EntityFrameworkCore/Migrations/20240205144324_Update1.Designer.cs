@@ -13,7 +13,7 @@ using Volo.Abp.EntityFrameworkCore;
 namespace SnitcherPortal.Migrations
 {
     [DbContext(typeof(SnitcherPortalDbContext))]
-    [Migration("20240205133233_Update1")]
+    [Migration("20240205144324_Update1")]
     partial class Update1
     {
         /// <inheritdoc />
@@ -54,6 +54,58 @@ namespace SnitcherPortal.Migrations
                     b.ToTable("AppActivityRecords", (string)null);
                 });
 
+            modelBuilder.Entity("SnitcherPortal.Calendars.Calendar", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("AllowedHours")
+                        .HasColumnType("nvarchar(max)")
+                        .HasColumnName("AllowedHours");
+
+                    b.Property<int>("DayOfWeek")
+                        .HasColumnType("int")
+                        .HasColumnName("DayOfWeek");
+
+                    b.Property<Guid>("SupervisedComputerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SupervisedComputerId");
+
+                    b.ToTable("AppCalendars", (string)null);
+                });
+
+            modelBuilder.Entity("SnitcherPortal.KnownProcesses.KnownProcess", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<bool>("IsHidden")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsHidden");
+
+                    b.Property<bool>("IsImportant")
+                        .HasColumnType("bit")
+                        .HasColumnName("IsImportant");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)")
+                        .HasColumnName("Name");
+
+                    b.Property<Guid>("SupervisedComputerId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("SupervisedComputerId");
+
+                    b.ToTable("AppKnownProcesses", (string)null);
+                });
+
             modelBuilder.Entity("SnitcherPortal.SnitchingLogs.SnitchingLog", b =>
                 {
                     b.Property<Guid>("Id")
@@ -85,10 +137,6 @@ namespace SnitcherPortal.Migrations
                     b.Property<DateTime?>("BanUntil")
                         .HasColumnType("datetime2")
                         .HasColumnName("BanUntil");
-
-                    b.Property<string>("Calendar")
-                        .HasColumnType("nvarchar(max)")
-                        .HasColumnName("Calendar");
 
                     b.Property<string>("ConcurrencyStamp")
                         .IsConcurrencyToken()
@@ -2463,6 +2511,24 @@ namespace SnitcherPortal.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("SnitcherPortal.Calendars.Calendar", b =>
+                {
+                    b.HasOne("SnitcherPortal.SupervisedComputers.SupervisedComputer", null)
+                        .WithMany("Calendars")
+                        .HasForeignKey("SupervisedComputerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("SnitcherPortal.KnownProcesses.KnownProcess", b =>
+                {
+                    b.HasOne("SnitcherPortal.SupervisedComputers.SupervisedComputer", null)
+                        .WithMany("KnownProcesses")
+                        .HasForeignKey("SupervisedComputerId")
+                        .OnDelete(DeleteBehavior.NoAction)
+                        .IsRequired();
+                });
+
             modelBuilder.Entity("SnitcherPortal.SnitchingLogs.SnitchingLog", b =>
                 {
                     b.HasOne("SnitcherPortal.SupervisedComputers.SupervisedComputer", null)
@@ -2644,6 +2710,10 @@ namespace SnitcherPortal.Migrations
             modelBuilder.Entity("SnitcherPortal.SupervisedComputers.SupervisedComputer", b =>
                 {
                     b.Navigation("ActivityRecords");
+
+                    b.Navigation("Calendars");
+
+                    b.Navigation("KnownProcesses");
 
                     b.Navigation("SnitchingLogs");
                 });

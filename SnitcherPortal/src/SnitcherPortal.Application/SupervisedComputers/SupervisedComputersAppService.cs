@@ -31,8 +31,8 @@ namespace SnitcherPortal.SupervisedComputers
 
         public virtual async Task<PagedResultDto<SupervisedComputerDto>> GetListAsync(GetSupervisedComputersInput input)
         {
-            var totalCount = await _supervisedComputerRepository.GetCountAsync(input.FilterText, input.Name, input.Identifier, input.IpAddress, input.Calendar, input.IsCalendarActive, input.BanUntilMin, input.BanUntilMax);
-            var items = await _supervisedComputerRepository.GetListAsync(input.FilterText, input.Name, input.Identifier, input.IpAddress, input.Calendar, input.IsCalendarActive, input.BanUntilMin, input.BanUntilMax, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var totalCount = await _supervisedComputerRepository.GetCountAsync(input.FilterText, input.Name, input.Identifier, input.IpAddress, input.IsCalendarActive, input.BanUntilMin, input.BanUntilMax);
+            var items = await _supervisedComputerRepository.GetListAsync(input.FilterText, input.Name, input.Identifier, input.IpAddress, input.IsCalendarActive, input.BanUntilMin, input.BanUntilMax, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<SupervisedComputerDto>
             {
@@ -57,7 +57,7 @@ namespace SnitcherPortal.SupervisedComputers
         {
 
             var supervisedComputer = await _supervisedComputerManager.CreateAsync(
-            input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.Calendar, input.BanUntil
+            input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil
             );
 
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
@@ -69,7 +69,7 @@ namespace SnitcherPortal.SupervisedComputers
 
             var supervisedComputer = await _supervisedComputerManager.UpdateAsync(
             id,
-            input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.Calendar, input.BanUntil, input.ConcurrencyStamp
+            input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil, input.ConcurrencyStamp
             );
 
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);

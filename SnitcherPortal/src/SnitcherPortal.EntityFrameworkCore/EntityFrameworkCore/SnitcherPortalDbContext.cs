@@ -1,3 +1,5 @@
+using SnitcherPortal.KnownProcesses;
+using SnitcherPortal.Calendars;
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.ActivityRecords;
 using SnitcherPortal.SupervisedComputers;
@@ -32,6 +34,8 @@ public class SnitcherPortalDbContext :
     IIdentityProDbContext,
     ISaasDbContext
 {
+    public DbSet<KnownProcess> KnownProcesses { get; set; } = null!;
+    public DbSet<Calendar> Calendars { get; set; } = null!;
     public DbSet<SnitchingLog> SnitchingLogs { get; set; } = null!;
     public DbSet<ActivityRecord> ActivityRecords { get; set; } = null!;
     public DbSet<SupervisedComputer> SupervisedComputers { get; set; } = null!;
@@ -137,19 +141,6 @@ public class SnitcherPortalDbContext :
         }
         if (builder.IsHostDatabase())
         {
-            builder.Entity<SupervisedComputer>(b =>
-            {
-                b.ToTable(SnitcherPortalConsts.DbTablePrefix + "SupervisedComputers", SnitcherPortalConsts.DbSchema);
-                b.ConfigureByConvention();
-                b.Property(x => x.Name).HasColumnName(nameof(SupervisedComputer.Name)).IsRequired().HasMaxLength(SupervisedComputerConsts.NameMaxLength);
-                b.Property(x => x.Identifier).HasColumnName(nameof(SupervisedComputer.Identifier)).IsRequired().HasMaxLength(SupervisedComputerConsts.IdentifierMaxLength);
-                b.Property(x => x.IpAddress).HasColumnName(nameof(SupervisedComputer.IpAddress)).HasMaxLength(SupervisedComputerConsts.IpAddressMaxLength);
-                b.Property(x => x.Calendar).HasColumnName(nameof(SupervisedComputer.Calendar));
-                b.Property(x => x.IsCalendarActive).HasColumnName(nameof(SupervisedComputer.IsCalendarActive));
-                b.Property(x => x.BanUntil).HasColumnName(nameof(SupervisedComputer.BanUntil));
-                b.HasMany(x => x.SnitchingLogs).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
-                b.HasMany(x => x.ActivityRecords).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
-            });
 
         }
         if (builder.IsHostDatabase())
@@ -162,6 +153,57 @@ public class SnitcherPortalDbContext :
                 b.Property(x => x.EndTime).HasColumnName(nameof(ActivityRecord.EndTime));
                 b.Property(x => x.DetectedProcesses).HasColumnName(nameof(ActivityRecord.DetectedProcesses));
                 b.HasOne<SupervisedComputer>().WithMany(x => x.ActivityRecords).HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<Calendar>(b =>
+            {
+                b.ToTable(SnitcherPortalConsts.DbTablePrefix + "Calendars", SnitcherPortalConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.DayOfWeek).HasColumnName(nameof(Calendar.DayOfWeek));
+                b.Property(x => x.AllowedHours).HasColumnName(nameof(Calendar.AllowedHours));
+                b.HasOne<SupervisedComputer>().WithMany(x => x.Calendars).HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<SupervisedComputer>(b =>
+            {
+                b.ToTable(SnitcherPortalConsts.DbTablePrefix + "SupervisedComputers", SnitcherPortalConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Name).HasColumnName(nameof(SupervisedComputer.Name)).IsRequired().HasMaxLength(SupervisedComputerConsts.NameMaxLength);
+                b.Property(x => x.Identifier).HasColumnName(nameof(SupervisedComputer.Identifier)).IsRequired().HasMaxLength(SupervisedComputerConsts.IdentifierMaxLength);
+                b.Property(x => x.IpAddress).HasColumnName(nameof(SupervisedComputer.IpAddress)).HasMaxLength(SupervisedComputerConsts.IpAddressMaxLength);
+                b.Property(x => x.IsCalendarActive).HasColumnName(nameof(SupervisedComputer.IsCalendarActive));
+                b.Property(x => x.BanUntil).HasColumnName(nameof(SupervisedComputer.BanUntil));
+                b.HasMany(x => x.SnitchingLogs).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+                b.HasMany(x => x.ActivityRecords).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+                b.HasMany(x => x.Calendars).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+                b.HasMany(x => x.KnownProcesses).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<KnownProcess>(b =>
+            {
+                b.ToTable(SnitcherPortalConsts.DbTablePrefix + "KnownProcesses", SnitcherPortalConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Name).HasColumnName(nameof(KnownProcess.Name)).IsRequired().HasMaxLength(KnownProcessConsts.NameMaxLength);
+                b.Property(x => x.IsHidden).HasColumnName(nameof(KnownProcess.IsHidden));
+                b.Property(x => x.IsImportant).HasColumnName(nameof(KnownProcess.IsImportant));
+                b.HasOne<SupervisedComputer>().WithMany(x => x.KnownProcesses).HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
             });
 
         }

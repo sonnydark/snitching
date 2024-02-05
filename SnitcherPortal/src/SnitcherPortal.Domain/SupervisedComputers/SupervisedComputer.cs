@@ -9,6 +9,8 @@ using JetBrains.Annotations;
 
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.ActivityRecords;
+using SnitcherPortal.Calendars;
+using SnitcherPortal.KnownProcesses;
 
 using Volo.Abp;
 
@@ -25,22 +27,21 @@ namespace SnitcherPortal.SupervisedComputers
         [CanBeNull]
         public virtual string? IpAddress { get; set; }
 
-        [CanBeNull]
-        public virtual string? Calendar { get; set; }
-
         public virtual bool IsCalendarActive { get; set; }
 
         public virtual DateTime? BanUntil { get; set; }
 
         public ICollection<SnitchingLog> SnitchingLogs { get; private set; }
         public ICollection<ActivityRecord> ActivityRecords { get; private set; }
+        public ICollection<Calendar> Calendars { get; private set; }
+        public ICollection<KnownProcess> KnownProcesses { get; private set; }
 
         protected SupervisedComputer()
         {
 
         }
 
-        public SupervisedComputer(Guid id, string name, string identifier, bool isCalendarActive, string? ipAddress = null, string? calendar = null, DateTime? banUntil = null)
+        public SupervisedComputer(Guid id, string name, string identifier, bool isCalendarActive, string? ipAddress = null, DateTime? banUntil = null)
         {
 
             Id = id;
@@ -53,10 +54,11 @@ namespace SnitcherPortal.SupervisedComputers
             Identifier = identifier;
             IsCalendarActive = isCalendarActive;
             IpAddress = ipAddress;
-            Calendar = calendar;
             BanUntil = banUntil;
             SnitchingLogs = new Collection<SnitchingLog>();
             ActivityRecords = new Collection<ActivityRecord>();
+            Calendars = new Collection<Calendar>();
+            KnownProcesses = new Collection<KnownProcess>();
         }
 
     }

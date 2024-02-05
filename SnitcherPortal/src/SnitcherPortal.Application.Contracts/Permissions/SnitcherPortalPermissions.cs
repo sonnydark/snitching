@@ -37,4 +37,20 @@ public static class SnitcherPortalPermissions
         public const string Create = Default + ".Create";
         public const string Delete = Default + ".Delete";
     }
+
+    public static class Calendars
+    {
+        public const string Default = GroupName + ".Calendars";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class KnownProcesses
+    {
+        public const string Default = GroupName + ".KnownProcesses";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
 }

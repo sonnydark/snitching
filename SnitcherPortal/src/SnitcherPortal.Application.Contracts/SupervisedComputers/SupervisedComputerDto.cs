@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.ActivityRecords;
+using SnitcherPortal.Calendars;
+using SnitcherPortal.KnownProcesses;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Domain.Entities;
 
@@ -12,7 +14,6 @@ namespace SnitcherPortal.SupervisedComputers
         public string Name { get; set; } = null!;
         public string Identifier { get; set; } = null!;
         public string? IpAddress { get; set; }
-        public string? Calendar { get; set; }
         public bool IsCalendarActive { get; set; }
         public DateTime? BanUntil { get; set; }
 
@@ -20,5 +21,7 @@ namespace SnitcherPortal.SupervisedComputers
 
         public List<SnitchingLogDto> SnitchingLogs { get; set; } = new();
         public List<ActivityRecordDto> ActivityRecords { get; set; } = new();
+        public List<CalendarDto> Calendars { get; set; } = new();
+        public List<KnownProcessDto> KnownProcesses { get; set; } = new();
     }
 }

@@ -77,6 +77,18 @@
     "MaxTimestamp": "Max Timestamp",
     "SnitchingLogs": "Snitching Logs",
     "NewSnitchingLog": "New Snitching Log",
-    "Permission:SnitchingLogs": "Snitching Logs"
+    "Permission:SnitchingLogs": "Snitching Logs",
+    "DayOfWeek": "Day Of Week",
+    "AllowedHours": "Allowed Hours",
+    "MinDayOfWeek": "Min Day Of Week",
+    "MaxDayOfWeek": "Max Day Of Week",
+    "Calendars": "Calendars",
+    "NewCalendar": "New Calendar",
+    "Permission:Calendars": "Calendars",
+    "IsHidden": "Is Hidden",
+    "IsImportant": "Is Important",
+    "KnownProcesses": "Known Processes",
+    "NewKnownProcess": "New Known Process",
+    "Permission:KnownProcesses": "Known Processes"
   }
 }

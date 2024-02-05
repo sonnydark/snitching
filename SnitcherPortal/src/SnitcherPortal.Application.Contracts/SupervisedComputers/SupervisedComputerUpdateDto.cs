@@ -15,7 +15,6 @@ namespace SnitcherPortal.SupervisedComputers
         public string Identifier { get; set; } = null!;
         [StringLength(SupervisedComputerConsts.IpAddressMaxLength)]
         public string? IpAddress { get; set; }
-        public string? Calendar { get; set; }
         public bool IsCalendarActive { get; set; }
         public DateTime? BanUntil { get; set; }
 

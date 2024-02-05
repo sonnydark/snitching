@@ -31,6 +31,16 @@ public class SnitcherPortalPermissionDefinitionProvider : PermissionDefinitionPr
         snitchingLogPermission.AddChild(SnitcherPortalPermissions.SnitchingLogs.Create, L("Permission:Create"));
         snitchingLogPermission.AddChild(SnitcherPortalPermissions.SnitchingLogs.Edit, L("Permission:Edit"));
         snitchingLogPermission.AddChild(SnitcherPortalPermissions.SnitchingLogs.Delete, L("Permission:Delete"));
+
+        var calendarPermission = myGroup.AddPermission(SnitcherPortalPermissions.Calendars.Default, L("Permission:Calendars"));
+        calendarPermission.AddChild(SnitcherPortalPermissions.Calendars.Create, L("Permission:Create"));
+        calendarPermission.AddChild(SnitcherPortalPermissions.Calendars.Edit, L("Permission:Edit"));
+        calendarPermission.AddChild(SnitcherPortalPermissions.Calendars.Delete, L("Permission:Delete"));
+
+        var knownProcessPermission = myGroup.AddPermission(SnitcherPortalPermissions.KnownProcesses.Default, L("Permission:KnownProcesses"));
+        knownProcessPermission.AddChild(SnitcherPortalPermissions.KnownProcesses.Create, L("Permission:Create"));
+        knownProcessPermission.AddChild(SnitcherPortalPermissions.KnownProcesses.Edit, L("Permission:Edit"));
+        knownProcessPermission.AddChild(SnitcherPortalPermissions.KnownProcesses.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)

@@ -1,3 +1,5 @@
+using SnitcherPortal.KnownProcesses;
+using SnitcherPortal.Calendars;
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.ActivityRecords;
 using Volo.Abp.AutoMapper;
@@ -17,5 +19,9 @@ public class SnitcherPortalBlazorAutoMapperProfile : Profile
         CreateMap<ActivityRecordDto, ActivityRecordUpdateDto>();
 
         CreateMap<SnitchingLogDto, SnitchingLogUpdateDto>();
+
+        CreateMap<CalendarDto, CalendarUpdateDto>();
+
+        CreateMap<KnownProcessDto, KnownProcessUpdateDto>();
     }
 }

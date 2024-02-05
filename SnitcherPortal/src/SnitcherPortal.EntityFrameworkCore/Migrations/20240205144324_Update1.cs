@@ -19,7 +19,6 @@ namespace SnitcherPortal.Migrations
                     Name = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: false),
                     Identifier = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
                     IpAddress = table.Column<string>(type: "nvarchar(64)", maxLength: 64, nullable: true),
-                    Calendar = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     IsCalendarActive = table.Column<bool>(type: "bit", nullable: false),
                     BanUntil = table.Column<DateTime>(type: "datetime2", nullable: true),
                     ExtraProperties = table.Column<string>(type: "nvarchar(max)", nullable: false),
@@ -51,6 +50,45 @@ namespace SnitcherPortal.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "AppCalendars",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SupervisedComputerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    DayOfWeek = table.Column<int>(type: "int", nullable: false),
+                    AllowedHours = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppCalendars", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppCalendars_AppSupervisedComputers_SupervisedComputerId",
+                        column: x => x.SupervisedComputerId,
+                        principalTable: "AppSupervisedComputers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AppKnownProcesses",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SupervisedComputerId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: false),
+                    IsHidden = table.Column<bool>(type: "bit", nullable: false),
+                    IsImportant = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AppKnownProcesses", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_AppKnownProcesses_AppSupervisedComputers_SupervisedComputerId",
+                        column: x => x.SupervisedComputerId,
+                        principalTable: "AppSupervisedComputers",
+                        principalColumn: "Id");
+                });
+
+            migrationBuilder.CreateTable(
                 name: "AppSnitchingLogs",
                 columns: table => new
                 {
@@ -75,6 +113,16 @@ namespace SnitcherPortal.Migrations
                 column: "SupervisedComputerId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_AppCalendars_SupervisedComputerId",
+                table: "AppCalendars",
+                column: "SupervisedComputerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_AppKnownProcesses_SupervisedComputerId",
+                table: "AppKnownProcesses",
+                column: "SupervisedComputerId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_AppSnitchingLogs_SupervisedComputerId",
                 table: "AppSnitchingLogs",
                 column: "SupervisedComputerId");
@@ -85,6 +133,12 @@ namespace SnitcherPortal.Migrations
         {
             migrationBuilder.DropTable(
                 name: "AppActivityRecords");
+
+            migrationBuilder.DropTable(
+                name: "AppCalendars");
+
+            migrationBuilder.DropTable(
+                name: "AppKnownProcesses");
 
             migrationBuilder.DropTable(
                 name: "AppSnitchingLogs");
