@@ -11,10 +11,10 @@ using Volo.Abp.AspNetCore.Components.Web.Theming.PageToolbars;
 using SnitcherPortal.SupervisedComputers;
 using SnitcherPortal.Permissions;
 using SnitcherPortal.Shared;
-using SnitcherPortal.SnitchingLogs; 
-using SnitcherPortal.ActivityRecords; 
-using SnitcherPortal.Calendars; 
-using SnitcherPortal.KnownProcesses; 
+using SnitcherPortal.SnitchingLogs;
+using SnitcherPortal.ActivityRecords;
+using SnitcherPortal.Calendars;
+using SnitcherPortal.KnownProcesses;
 
 
 namespace SnitcherPortal.Blazor.Pages
@@ -22,7 +22,7 @@ namespace SnitcherPortal.Blazor.Pages
     public partial class SupervisedComputers
     {
         protected List<Volo.Abp.BlazoriseUI.BreadcrumbItem> BreadcrumbItems = new List<Volo.Abp.BlazoriseUI.BreadcrumbItem>();
-        protected PageToolbar Toolbar {get;} = new PageToolbar();
+        protected PageToolbar Toolbar { get; } = new PageToolbar();
         protected bool ShowAdvancedFilters { get; set; }
         private IReadOnlyList<SupervisedComputerDto> SupervisedComputerList { get; set; }
         private int PageSize { get; } = LimitedResultRequestDto.DefaultMaxResultCount;
@@ -44,89 +44,79 @@ namespace SnitcherPortal.Blazor.Pages
         protected string SelectedCreateTab = "supervisedComputer-create-tab";
         protected string SelectedEditTab = "supervisedComputer-edit-tab";
         private SupervisedComputerDto? SelectedSupervisedComputer;
-        
-        
-                #region Child Entities
-        
-                #region SnitchingLogs
 
-                private bool CanListSnitchingLog { get; set; }
-                private bool CanCreateSnitchingLog { get; set; }
-                private bool CanEditSnitchingLog { get; set; }
-                private bool CanDeleteSnitchingLog { get; set; }
-                private SnitchingLogCreateDto NewSnitchingLog { get; set; }
-                private Dictionary<Guid, DataGrid<SnitchingLogDto>> SnitchingLogDataGrids { get; set; } = new();
-                private int SnitchingLogPageSize { get; } = 5;
-                private DataGridEntityActionsColumn<SnitchingLogDto> SnitchingLogEntityActionsColumns { get; set; } = new();
-                private Validations NewSnitchingLogValidations { get; set; } = new();
-                private Modal CreateSnitchingLogModal { get; set; } = new();
-                private Guid EditingSnitchingLogId { get; set; }
-                private SnitchingLogUpdateDto EditingSnitchingLog { get; set; }
-                private Validations EditingSnitchingLogValidations { get; set; } = new();
-                private Modal EditSnitchingLogModal { get; set; } = new();
-    
-            
-                #endregion
+        #region Child Entities
+
+        #region SnitchingLogs
+
+        private bool CanListSnitchingLog { get; set; }
+        private SnitchingLogCreateDto NewSnitchingLog { get; set; }
+        private Dictionary<Guid, DataGrid<SnitchingLogDto>> SnitchingLogDataGrids { get; set; } = new();
+        private int SnitchingLogPageSize { get; } = 5;
+        private Validations NewSnitchingLogValidations { get; set; } = new();
+        private Modal CreateSnitchingLogModal { get; set; } = new();
+        private Guid EditingSnitchingLogId { get; set; }
+        private SnitchingLogUpdateDto EditingSnitchingLog { get; set; }
+        private Validations EditingSnitchingLogValidations { get; set; } = new();
+        private Modal EditSnitchingLogModal { get; set; } = new();
+
+
+        #endregion
         #region ActivityRecords
 
-                private bool CanListActivityRecord { get; set; }
-                private bool CanCreateActivityRecord { get; set; }
-                private bool CanEditActivityRecord { get; set; }
-                private bool CanDeleteActivityRecord { get; set; }
-                private ActivityRecordCreateDto NewActivityRecord { get; set; }
-                private Dictionary<Guid, DataGrid<ActivityRecordDto>> ActivityRecordDataGrids { get; set; } = new();
-                private int ActivityRecordPageSize { get; } = 5;
-                private DataGridEntityActionsColumn<ActivityRecordDto> ActivityRecordEntityActionsColumns { get; set; } = new();
-                private Validations NewActivityRecordValidations { get; set; } = new();
-                private Modal CreateActivityRecordModal { get; set; } = new();
-                private Guid EditingActivityRecordId { get; set; }
-                private ActivityRecordUpdateDto EditingActivityRecord { get; set; }
-                private Validations EditingActivityRecordValidations { get; set; } = new();
-                private Modal EditActivityRecordModal { get; set; } = new();
-    
-            
-                #endregion
+        private bool CanListActivityRecord { get; set; }
+        private ActivityRecordCreateDto NewActivityRecord { get; set; }
+        private Dictionary<Guid, DataGrid<ActivityRecordDto>> ActivityRecordDataGrids { get; set; } = new();
+        private int ActivityRecordPageSize { get; } = 5;
+        private Validations NewActivityRecordValidations { get; set; } = new();
+        private Modal CreateActivityRecordModal { get; set; } = new();
+        private Guid EditingActivityRecordId { get; set; }
+        private ActivityRecordUpdateDto EditingActivityRecord { get; set; }
+        private Validations EditingActivityRecordValidations { get; set; } = new();
+        private Modal EditActivityRecordModal { get; set; } = new();
+
+        #endregion
         #region Calendars
 
-                private bool CanListCalendar { get; set; }
-                private bool CanCreateCalendar { get; set; }
-                private bool CanEditCalendar { get; set; }
-                private bool CanDeleteCalendar { get; set; }
-                private CalendarCreateDto NewCalendar { get; set; }
-                private Dictionary<Guid, DataGrid<CalendarDto>> CalendarDataGrids { get; set; } = new();
-                private int CalendarPageSize { get; } = 5;
-                private DataGridEntityActionsColumn<CalendarDto> CalendarEntityActionsColumns { get; set; } = new();
-                private Validations NewCalendarValidations { get; set; } = new();
-                private Modal CreateCalendarModal { get; set; } = new();
-                private Guid EditingCalendarId { get; set; }
-                private CalendarUpdateDto EditingCalendar { get; set; }
-                private Validations EditingCalendarValidations { get; set; } = new();
-                private Modal EditCalendarModal { get; set; } = new();
-    
-            
-                #endregion
+        private bool CanListCalendar { get; set; }
+        private bool CanCreateCalendar { get; set; }
+        private bool CanEditCalendar { get; set; }
+        private bool CanDeleteCalendar { get; set; }
+        private CalendarCreateDto NewCalendar { get; set; }
+        private Dictionary<Guid, DataGrid<CalendarDto>> CalendarDataGrids { get; set; } = new();
+        private int CalendarPageSize { get; } = 7;
+        private DataGridEntityActionsColumn<CalendarDto> CalendarEntityActionsColumns { get; set; } = new();
+        private Validations NewCalendarValidations { get; set; } = new();
+        private Modal CreateCalendarModal { get; set; } = new();
+        private Guid EditingCalendarId { get; set; }
+        private CalendarUpdateDto EditingCalendar { get; set; }
+        private Validations EditingCalendarValidations { get; set; } = new();
+        private Modal EditCalendarModal { get; set; } = new();
+
+
+        #endregion
         #region KnownProcesses
 
-                private bool CanListKnownProcess { get; set; }
-                private bool CanCreateKnownProcess { get; set; }
-                private bool CanEditKnownProcess { get; set; }
-                private bool CanDeleteKnownProcess { get; set; }
-                private KnownProcessCreateDto NewKnownProcess { get; set; }
-                private Dictionary<Guid, DataGrid<KnownProcessDto>> KnownProcessDataGrids { get; set; } = new();
-                private int KnownProcessPageSize { get; } = 5;
-                private DataGridEntityActionsColumn<KnownProcessDto> KnownProcessEntityActionsColumns { get; set; } = new();
-                private Validations NewKnownProcessValidations { get; set; } = new();
-                private Modal CreateKnownProcessModal { get; set; } = new();
-                private Guid EditingKnownProcessId { get; set; }
-                private KnownProcessUpdateDto EditingKnownProcess { get; set; }
-                private Validations EditingKnownProcessValidations { get; set; } = new();
-                private Modal EditKnownProcessModal { get; set; } = new();
-    
-            
-                #endregion
-        
+        private bool CanListKnownProcess { get; set; }
+        private bool CanCreateKnownProcess { get; set; }
+        private bool CanEditKnownProcess { get; set; }
+        private bool CanDeleteKnownProcess { get; set; }
+        private KnownProcessCreateDto NewKnownProcess { get; set; }
+        private Dictionary<Guid, DataGrid<KnownProcessDto>> KnownProcessDataGrids { get; set; } = new();
+        private int KnownProcessPageSize { get; } = 5;
+        private DataGridEntityActionsColumn<KnownProcessDto> KnownProcessEntityActionsColumns { get; set; } = new();
+        private Validations NewKnownProcessValidations { get; set; } = new();
+        private Modal CreateKnownProcessModal { get; set; } = new();
+        private Guid EditingKnownProcessId { get; set; }
+        private KnownProcessUpdateDto EditingKnownProcess { get; set; }
+        private Validations EditingKnownProcessValidations { get; set; } = new();
+        private Modal EditKnownProcessModal { get; set; } = new();
+
+
         #endregion
-        
+
+        #endregion
+
         public SupervisedComputers()
         {
             NewSupervisedComputer = new SupervisedComputerCreateDto();
@@ -138,15 +128,15 @@ namespace SnitcherPortal.Blazor.Pages
                 Sorting = CurrentSorting
             };
             SupervisedComputerList = new List<SupervisedComputerDto>();
-            
+
             NewSnitchingLog = new SnitchingLogCreateDto();
-EditingSnitchingLog = new SnitchingLogUpdateDto();
-NewActivityRecord = new ActivityRecordCreateDto();
-EditingActivityRecord = new ActivityRecordUpdateDto();
-NewCalendar = new CalendarCreateDto();
-EditingCalendar = new CalendarUpdateDto();
-NewKnownProcess = new KnownProcessCreateDto();
-EditingKnownProcess = new KnownProcessUpdateDto();
+            EditingSnitchingLog = new SnitchingLogUpdateDto();
+            NewActivityRecord = new ActivityRecordCreateDto();
+            EditingActivityRecord = new ActivityRecordUpdateDto();
+            NewCalendar = new CalendarCreateDto();
+            EditingCalendar = new CalendarUpdateDto();
+            NewKnownProcess = new KnownProcessCreateDto();
+            EditingKnownProcess = new KnownProcessUpdateDto();
         }
 
         protected override async Task OnInitializedAsync()
@@ -154,7 +144,7 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await SetToolbarItemsAsync();
             await SetBreadcrumbItemsAsync();
             await SetPermissionsAsync();
-            
+
         }
 
         protected virtual ValueTask SetBreadcrumbItemsAsync()
@@ -165,8 +155,8 @@ EditingKnownProcess = new KnownProcessUpdateDto();
 
         protected virtual ValueTask SetToolbarItemsAsync()
         {
-            
-            
+
+
             Toolbar.AddButton(L["NewSupervisedComputer"], async () =>
             {
                 await OpenCreateSupervisedComputerModalAsync();
@@ -183,28 +173,18 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                             .IsGrantedAsync(SnitcherPortalPermissions.SupervisedComputers.Edit);
             CanDeleteSupervisedComputer = await AuthorizationService
                             .IsGrantedAsync(SnitcherPortalPermissions.SupervisedComputers.Delete);
-                            
-            
+
+
             #region SnitchingLogs
             CanListSnitchingLog = await AuthorizationService
                 .IsGrantedAsync(SnitcherPortalPermissions.SnitchingLogs.Default);
-            CanCreateSnitchingLog = await AuthorizationService
-                .IsGrantedAsync(SnitcherPortalPermissions.SnitchingLogs.Create);
-            CanEditSnitchingLog = await AuthorizationService
-                .IsGrantedAsync(SnitcherPortalPermissions.SnitchingLogs.Edit);
-            CanDeleteSnitchingLog = await AuthorizationService
-                .IsGrantedAsync(SnitcherPortalPermissions.SnitchingLogs.Delete);
+            
             #endregion
 
             #region ActivityRecords
             CanListActivityRecord = await AuthorizationService
                 .IsGrantedAsync(SnitcherPortalPermissions.ActivityRecords.Default);
-            CanCreateActivityRecord = await AuthorizationService
-                .IsGrantedAsync(SnitcherPortalPermissions.ActivityRecords.Create);
-            CanEditActivityRecord = await AuthorizationService
-                .IsGrantedAsync(SnitcherPortalPermissions.ActivityRecords.Edit);
-            CanDeleteActivityRecord = await AuthorizationService
-                .IsGrantedAsync(SnitcherPortalPermissions.ActivityRecords.Delete);
+            
             #endregion
 
             #region Calendars
@@ -261,10 +241,11 @@ EditingKnownProcess = new KnownProcessUpdateDto();
 
         private async Task OpenCreateSupervisedComputerModalAsync()
         {
-            NewSupervisedComputer = new SupervisedComputerCreateDto{
+            NewSupervisedComputer = new SupervisedComputerCreateDto
+            {
                 BanUntil = DateTime.Now,
 
-                
+
             };
             await NewSupervisedComputerValidations.ClearAll();
             await CreateSupervisedComputerModal.Show();
@@ -272,10 +253,11 @@ EditingKnownProcess = new KnownProcessUpdateDto();
 
         private async Task CloseCreateSupervisedComputerModalAsync()
         {
-            NewSupervisedComputer = new SupervisedComputerCreateDto{
+            NewSupervisedComputer = new SupervisedComputerCreateDto
+            {
                 BanUntil = DateTime.Now,
 
-                
+
             };
             await CreateSupervisedComputerModal.Hide();
         }
@@ -283,7 +265,7 @@ EditingKnownProcess = new KnownProcessUpdateDto();
         private async Task OpenEditSupervisedComputerModalAsync(SupervisedComputerDto input)
         {
             var supervisedComputer = await SupervisedComputersAppService.GetAsync(input.Id);
-            
+
             EditingSupervisedComputerId = supervisedComputer.Id;
             EditingSupervisedComputer = ObjectMapper.Map<SupervisedComputerDto, SupervisedComputerUpdateDto>(supervisedComputer);
             await EditingSupervisedComputerValidations.ClearAll();
@@ -331,7 +313,7 @@ EditingKnownProcess = new KnownProcessUpdateDto();
 
                 await SupervisedComputersAppService.UpdateAsync(EditingSupervisedComputerId, EditingSupervisedComputer);
                 await GetSupervisedComputersAsync();
-                await EditSupervisedComputerModal.Hide();                
+                await EditSupervisedComputerModal.Hide();
             }
             catch (Exception ex)
             {
@@ -379,26 +361,26 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             Filter.BanUntilMax = banUntilMax.HasValue ? banUntilMax.Value.Date.AddDays(1).AddSeconds(-1) : banUntilMax;
             await SearchAsync();
         }
-        
 
 
-    private bool ShouldShowDetailRow()
-    {
-        return CanListSnitchingLog ||CanListActivityRecord ||CanListCalendar ||CanListKnownProcess;
-    }
-    
-    public string SelectedChildTab { get; set; } = "snitchinglog-tab";
-        
-    private Task OnSelectedChildTabChanged(string name)
-    {
-        SelectedChildTab = name;
-    
-        return Task.CompletedTask;
-    }
+
+        private bool ShouldShowDetailRow()
+        {
+            return CanListSnitchingLog || CanListActivityRecord || CanListCalendar || CanListKnownProcess;
+        }
+
+        public string SelectedChildTab { get; set; } = "snitchinglog-tab";
+
+        private Task OnSelectedChildTabChanged(string name)
+        {
+            SelectedChildTab = name;
+
+            return Task.CompletedTask;
+        }
 
 
         #region SnitchingLogs
-        
+
         private async Task OnSnitchingLogDataGridReadAsync(DataGridReadDataEventArgs<SnitchingLogDto> e, Guid supervisedComputerId)
         {
             var sorting = e.Columns
@@ -410,16 +392,16 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await SetSnitchingLogsAsync(supervisedComputerId, currentPage, sorting: sorting);
             await InvokeAsync(StateHasChanged);
         }
-        
+
         private async Task SetSnitchingLogsAsync(Guid supervisedComputerId, int currentPage = 1, string? sorting = null)
         {
             var supervisedComputer = SupervisedComputerList.FirstOrDefault(x => x.Id == supervisedComputerId);
-            if(supervisedComputer == null)
+            if (supervisedComputer == null)
             {
                 return;
             }
 
-            var snitchingLogs = await SnitchingLogsAppService.GetListBySupervisedComputerIdAsync(new GetSnitchingLogListInput 
+            var snitchingLogs = await SnitchingLogsAppService.GetListBySupervisedComputerIdAsync(new GetSnitchingLogListInput
             {
                 SupervisedComputerId = supervisedComputerId,
                 MaxResultCount = SnitchingLogPageSize,
@@ -430,11 +412,11 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             supervisedComputer.SnitchingLogs = snitchingLogs.Items.ToList();
 
             var snitchingLogDataGrid = SnitchingLogDataGrids[supervisedComputerId];
-            
+
             snitchingLogDataGrid.CurrentPage = currentPage;
             snitchingLogDataGrid.TotalItems = (int)snitchingLogs.TotalCount;
         }
-        
+
         private async Task OpenEditSnitchingLogModalAsync(SnitchingLogDto input)
         {
             var snitchingLog = await SnitchingLogsAppService.GetAsync(input.Id);
@@ -444,12 +426,12 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await EditingSnitchingLogValidations.ClearAll();
             await EditSnitchingLogModal.Show();
         }
-        
+
         private async Task CloseEditSnitchingLogModalAsync()
         {
             await EditSnitchingLogModal.Hide();
         }
-        
+
         private async Task UpdateSnitchingLogAsync()
         {
             try
@@ -468,13 +450,13 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                 await HandleErrorAsync(ex);
             }
         }
-        
+
         private async Task DeleteSnitchingLogAsync(SnitchingLogDto input)
         {
             await SnitchingLogsAppService.DeleteAsync(input.Id);
             await SetSnitchingLogsAsync(input.SupervisedComputerId);
         }
-        
+
         private async Task OpenCreateSnitchingLogModalAsync(Guid supervisedComputerId)
         {
             NewSnitchingLog = new SnitchingLogCreateDto
@@ -485,14 +467,14 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await NewSnitchingLogValidations.ClearAll();
             await CreateSnitchingLogModal.Show();
         }
-        
+
         private async Task CloseCreateSnitchingLogModalAsync()
         {
             NewSnitchingLog = new SnitchingLogCreateDto();
 
             await CreateSnitchingLogModal.Hide();
         }
-        
+
         private async Task CreateSnitchingLogAsync()
         {
             try
@@ -511,13 +493,13 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                 await HandleErrorAsync(ex);
             }
         }
-        
-        
-        
+
+
+
         #endregion
 
         #region ActivityRecords
-        
+
         private async Task OnActivityRecordDataGridReadAsync(DataGridReadDataEventArgs<ActivityRecordDto> e, Guid supervisedComputerId)
         {
             var sorting = e.Columns
@@ -529,16 +511,16 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await SetActivityRecordsAsync(supervisedComputerId, currentPage, sorting: sorting);
             await InvokeAsync(StateHasChanged);
         }
-        
+
         private async Task SetActivityRecordsAsync(Guid supervisedComputerId, int currentPage = 1, string? sorting = null)
         {
             var supervisedComputer = SupervisedComputerList.FirstOrDefault(x => x.Id == supervisedComputerId);
-            if(supervisedComputer == null)
+            if (supervisedComputer == null)
             {
                 return;
             }
 
-            var activityRecords = await ActivityRecordsAppService.GetListBySupervisedComputerIdAsync(new GetActivityRecordListInput 
+            var activityRecords = await ActivityRecordsAppService.GetListBySupervisedComputerIdAsync(new GetActivityRecordListInput
             {
                 SupervisedComputerId = supervisedComputerId,
                 MaxResultCount = ActivityRecordPageSize,
@@ -549,11 +531,11 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             supervisedComputer.ActivityRecords = activityRecords.Items.ToList();
 
             var activityRecordDataGrid = ActivityRecordDataGrids[supervisedComputerId];
-            
+
             activityRecordDataGrid.CurrentPage = currentPage;
             activityRecordDataGrid.TotalItems = (int)activityRecords.TotalCount;
         }
-        
+
         private async Task OpenEditActivityRecordModalAsync(ActivityRecordDto input)
         {
             var activityRecord = await ActivityRecordsAppService.GetAsync(input.Id);
@@ -563,12 +545,12 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await EditingActivityRecordValidations.ClearAll();
             await EditActivityRecordModal.Show();
         }
-        
+
         private async Task CloseEditActivityRecordModalAsync()
         {
             await EditActivityRecordModal.Hide();
         }
-        
+
         private async Task UpdateActivityRecordAsync()
         {
             try
@@ -587,13 +569,13 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                 await HandleErrorAsync(ex);
             }
         }
-        
+
         private async Task DeleteActivityRecordAsync(ActivityRecordDto input)
         {
             await ActivityRecordsAppService.DeleteAsync(input.Id);
             await SetActivityRecordsAsync(input.SupervisedComputerId);
         }
-        
+
         private async Task OpenCreateActivityRecordModalAsync(Guid supervisedComputerId)
         {
             NewActivityRecord = new ActivityRecordCreateDto
@@ -604,14 +586,14 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await NewActivityRecordValidations.ClearAll();
             await CreateActivityRecordModal.Show();
         }
-        
+
         private async Task CloseCreateActivityRecordModalAsync()
         {
             NewActivityRecord = new ActivityRecordCreateDto();
 
             await CreateActivityRecordModal.Hide();
         }
-        
+
         private async Task CreateActivityRecordAsync()
         {
             try
@@ -630,13 +612,13 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                 await HandleErrorAsync(ex);
             }
         }
-        
-        
-        
+
+
+
         #endregion
 
         #region Calendars
-        
+
         private async Task OnCalendarDataGridReadAsync(DataGridReadDataEventArgs<CalendarDto> e, Guid supervisedComputerId)
         {
             var sorting = e.Columns
@@ -648,16 +630,16 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await SetCalendarsAsync(supervisedComputerId, currentPage, sorting: sorting);
             await InvokeAsync(StateHasChanged);
         }
-        
+
         private async Task SetCalendarsAsync(Guid supervisedComputerId, int currentPage = 1, string? sorting = null)
         {
             var supervisedComputer = SupervisedComputerList.FirstOrDefault(x => x.Id == supervisedComputerId);
-            if(supervisedComputer == null)
+            if (supervisedComputer == null)
             {
                 return;
             }
 
-            var calendars = await CalendarsAppService.GetListBySupervisedComputerIdAsync(new GetCalendarListInput 
+            var calendars = await CalendarsAppService.GetListBySupervisedComputerIdAsync(new GetCalendarListInput
             {
                 SupervisedComputerId = supervisedComputerId,
                 MaxResultCount = CalendarPageSize,
@@ -668,11 +650,11 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             supervisedComputer.Calendars = calendars.Items.ToList();
 
             var calendarDataGrid = CalendarDataGrids[supervisedComputerId];
-            
+
             calendarDataGrid.CurrentPage = currentPage;
             calendarDataGrid.TotalItems = (int)calendars.TotalCount;
         }
-        
+
         private async Task OpenEditCalendarModalAsync(CalendarDto input)
         {
             var calendar = await CalendarsAppService.GetAsync(input.Id);
@@ -682,12 +664,12 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await EditingCalendarValidations.ClearAll();
             await EditCalendarModal.Show();
         }
-        
+
         private async Task CloseEditCalendarModalAsync()
         {
             await EditCalendarModal.Hide();
         }
-        
+
         private async Task UpdateCalendarAsync()
         {
             try
@@ -706,13 +688,13 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                 await HandleErrorAsync(ex);
             }
         }
-        
+
         private async Task DeleteCalendarAsync(CalendarDto input)
         {
             await CalendarsAppService.DeleteAsync(input.Id);
             await SetCalendarsAsync(input.SupervisedComputerId);
         }
-        
+
         private async Task OpenCreateCalendarModalAsync(Guid supervisedComputerId)
         {
             NewCalendar = new CalendarCreateDto
@@ -723,14 +705,14 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await NewCalendarValidations.ClearAll();
             await CreateCalendarModal.Show();
         }
-        
+
         private async Task CloseCreateCalendarModalAsync()
         {
             NewCalendar = new CalendarCreateDto();
 
             await CreateCalendarModal.Hide();
         }
-        
+
         private async Task CreateCalendarAsync()
         {
             try
@@ -749,13 +731,13 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                 await HandleErrorAsync(ex);
             }
         }
-        
-        
-        
+
+
+
         #endregion
 
         #region KnownProcesses
-        
+
         private async Task OnKnownProcessDataGridReadAsync(DataGridReadDataEventArgs<KnownProcessDto> e, Guid supervisedComputerId)
         {
             var sorting = e.Columns
@@ -767,16 +749,16 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await SetKnownProcessesAsync(supervisedComputerId, currentPage, sorting: sorting);
             await InvokeAsync(StateHasChanged);
         }
-        
+
         private async Task SetKnownProcessesAsync(Guid supervisedComputerId, int currentPage = 1, string? sorting = null)
         {
             var supervisedComputer = SupervisedComputerList.FirstOrDefault(x => x.Id == supervisedComputerId);
-            if(supervisedComputer == null)
+            if (supervisedComputer == null)
             {
                 return;
             }
 
-            var knownProcesses = await KnownProcessesAppService.GetListBySupervisedComputerIdAsync(new GetKnownProcessListInput 
+            var knownProcesses = await KnownProcessesAppService.GetListBySupervisedComputerIdAsync(new GetKnownProcessListInput
             {
                 SupervisedComputerId = supervisedComputerId,
                 MaxResultCount = KnownProcessPageSize,
@@ -787,11 +769,11 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             supervisedComputer.KnownProcesses = knownProcesses.Items.ToList();
 
             var knownProcessDataGrid = KnownProcessDataGrids[supervisedComputerId];
-            
+
             knownProcessDataGrid.CurrentPage = currentPage;
             knownProcessDataGrid.TotalItems = (int)knownProcesses.TotalCount;
         }
-        
+
         private async Task OpenEditKnownProcessModalAsync(KnownProcessDto input)
         {
             var knownProcess = await KnownProcessesAppService.GetAsync(input.Id);
@@ -801,12 +783,12 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await EditingKnownProcessValidations.ClearAll();
             await EditKnownProcessModal.Show();
         }
-        
+
         private async Task CloseEditKnownProcessModalAsync()
         {
             await EditKnownProcessModal.Hide();
         }
-        
+
         private async Task UpdateKnownProcessAsync()
         {
             try
@@ -825,13 +807,13 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                 await HandleErrorAsync(ex);
             }
         }
-        
+
         private async Task DeleteKnownProcessAsync(KnownProcessDto input)
         {
             await KnownProcessesAppService.DeleteAsync(input.Id);
             await SetKnownProcessesAsync(input.SupervisedComputerId);
         }
-        
+
         private async Task OpenCreateKnownProcessModalAsync(Guid supervisedComputerId)
         {
             NewKnownProcess = new KnownProcessCreateDto
@@ -842,14 +824,14 @@ EditingKnownProcess = new KnownProcessUpdateDto();
             await NewKnownProcessValidations.ClearAll();
             await CreateKnownProcessModal.Show();
         }
-        
+
         private async Task CloseCreateKnownProcessModalAsync()
         {
             NewKnownProcess = new KnownProcessCreateDto();
 
             await CreateKnownProcessModal.Hide();
         }
-        
+
         private async Task CreateKnownProcessAsync()
         {
             try
@@ -868,9 +850,9 @@ EditingKnownProcess = new KnownProcessUpdateDto();
                 await HandleErrorAsync(ex);
             }
         }
-        
-        
-        
+
+
+
         #endregion
     }
 }

@@ -11,6 +11,7 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using SnitcherPortal.Permissions;
 using SnitcherPortal.SupervisedComputers;
+using SnitcherPortal.Calendars;
 
 namespace SnitcherPortal.SupervisedComputers
 {
@@ -21,10 +22,13 @@ namespace SnitcherPortal.SupervisedComputers
 
         protected ISupervisedComputerRepository _supervisedComputerRepository;
         protected SupervisedComputerManager _supervisedComputerManager;
+        protected CalendarManager _calendarManager;
 
-        public SupervisedComputersAppService(ISupervisedComputerRepository supervisedComputerRepository, SupervisedComputerManager supervisedComputerManager)
+        public SupervisedComputersAppService(ISupervisedComputerRepository supervisedComputerRepository,
+            SupervisedComputerManager supervisedComputerManager,
+            CalendarManager calendarManager)
         {
-
+            _calendarManager = calendarManager;
             _supervisedComputerRepository = supervisedComputerRepository;
             _supervisedComputerManager = supervisedComputerManager;
         }
@@ -59,6 +63,14 @@ namespace SnitcherPortal.SupervisedComputers
             var supervisedComputer = await _supervisedComputerManager.CreateAsync(
             input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil
             );
+
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Monday);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Tuesday);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Wednesday);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Thursday);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Friday);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Saturday);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Sunday);
 
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
         }

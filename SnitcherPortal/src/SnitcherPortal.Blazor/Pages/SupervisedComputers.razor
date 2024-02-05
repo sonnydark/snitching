@@ -1,5 +1,3 @@
-
-
 @page "/supervised-computers"
 
 @attribute [Authorize(SnitcherPortalPermissions.SupervisedComputers.Default)]
@@ -17,14 +15,12 @@
 @using Volo.Abp.ObjectMapping
 @using Volo.Abp.AspNetCore.Components.Messages
 @using Volo.Abp.AspNetCore.Components.Web.Theming.Layout
-@using SnitcherPortal.SnitchingLogs 
-@using SnitcherPortal.ActivityRecords 
-@using SnitcherPortal.Calendars 
-@using SnitcherPortal.KnownProcesses 
+@using SnitcherPortal.SnitchingLogs
+@using SnitcherPortal.ActivityRecords
+@using SnitcherPortal.Calendars
+@using SnitcherPortal.KnownProcesses
 
 @using SnitcherPortal.Permissions
-
-
 
 @inherits SnitcherPortalComponentBase
 @inject ISupervisedComputersAppService SupervisedComputersAppService
@@ -35,99 +31,9 @@
 
 @inject IUiMessageService UiMessageService
 
-
-
 @* ************************* PAGE HEADER ************************* *@
 <PageHeader Title="@L["SupervisedComputers"]" BreadcrumbItems="BreadcrumbItems" Toolbar="Toolbar">
-
 </PageHeader>
-
-@* ************************* SEARCH ************************* *@
-<Card>
-    <CardBody>
-
-        <Form id="SupervisedComputerSearchForm" class="mb-3">
-            <Addons>
-                <Addon AddonType="AddonType.Body">
-                    <TextEdit @bind-Text="@Filter.FilterText"
-                              Autofocus="true"
-                              Placeholder="@L["Search"]">
-                    </TextEdit>
-                </Addon>
-                <Addon AddonType="AddonType.End">
-                    <SubmitButton Form="SupervisedComputerSearchForm" Clicked="GetSupervisedComputersAsync">
-                        <Icon Name="IconName.Search" Class="me-1"></Icon>@L["Search"]
-                    </SubmitButton>
-                </Addon>
-            </Addons>
-        </Form>
-        
-        <Row Class="mt-3 mb-3"> 
-            <div class="col-md-12">
-                <a href="javascript:;" class="text-decoration-none" @onclick="() => ShowAdvancedFilters = !ShowAdvancedFilters">@L["SeeAdvancedFilters"]</a>
-            </div>
-        </Row>
-        
-        <div style="display: @(!ShowAdvancedFilters ? "none" : "block")">
-            <Row>
-                <Column ColumnSize="ColumnSize.Is3">
-                    <Field>
-                        <FieldLabel>@L["Name"]</FieldLabel>
-                        <TextEdit Text="@Filter.Name" TextChanged="@OnNameChangedAsync" />                       
-                    </Field>
-                </Column>
-                <Column ColumnSize="ColumnSize.Is3">
-                    <Field>
-                        <FieldLabel>@L["Identifier"]</FieldLabel>
-                        <TextEdit Text="@Filter.Identifier" TextChanged="@OnIdentifierChangedAsync" />                       
-                    </Field>
-                </Column>
-                <Column ColumnSize="ColumnSize.Is3">
-                    <Field>
-                        <FieldLabel>@L["IpAddress"]</FieldLabel>
-                        <TextEdit Text="@Filter.IpAddress" TextChanged="@OnIpAddressChangedAsync" />                       
-                    </Field>
-                </Column>
-                <Column ColumnSize="ColumnSize.Is3">
-                    <Field>
-                        <FieldLabel>@L["IsCalendarActive"]</FieldLabel>
-                        <Select TValue="bool?"
-		SelectedValue="@Filter.IsCalendarActive"
-		SelectedValueChanged="@OnIsCalendarActiveChangedAsync">
-
-<SelectItem></SelectItem>
-<SelectItem Value="true">@L["Yes"]</SelectItem>
-<SelectItem Value="false">@L["No"]</SelectItem>
-
-</Select>                       
-                    </Field>
-                </Column>
-                <Column ColumnSize="ColumnSize.Is3">
-                    <Field>
-                        <FieldLabel>@L["MinBanUntil"]</FieldLabel>
-                        <DatePicker TValue="DateTime?"
-            InputMode="DateInputMode.Date"
-            Date="@Filter.BanUntilMin"
-            DateChanged="@OnBanUntilMinChangedAsync"
-            Placeholder="@string.Empty" />                       
-                    </Field>
-                </Column>
-                <Column ColumnSize="ColumnSize.Is3">
-                    <Field>
-                        <FieldLabel>@L["MaxBanUntil"]</FieldLabel>
-                        <DatePicker TValue="DateTime?"
-            InputMode="DateInputMode.Date"
-            Date="@Filter.BanUntilMax"
-            DateChanged="@OnBanUntilMaxChangedAsync"
-            Placeholder="@string.Empty" />                       
-                    </Field>
-                </Column>
-            </Row>
-
-        </div>
-
-    </CardBody>
-</Card>
 
 @* ************************* DATA GRID ************************* *@
 <Card>
@@ -152,11 +58,11 @@
                         <DisplayTemplate>
                             @if (context.Id == SelectedSupervisedComputer?.Id)
                             {
-                                <i class="fas fa-chevron-up"/>
+                                <i class="fas fa-chevron-up" />
                             }
                             else
                             {
-                                <i class="fas fa-chevron-down"/>
+                                <i class="fas fa-chevron-down" />
                             }
                         </DisplayTemplate>
                     </DataGridColumn>
@@ -177,25 +83,25 @@
                         </EntityActions>
                     </DisplayTemplate>
                 </DataGridEntityActionsColumn>
-               
-              <DataGridColumn TItem="SupervisedComputerDto"
-                      Field="Name"
-                      Caption="@L["Name"]">
-              </DataGridColumn>
 
-              <DataGridColumn TItem="SupervisedComputerDto"
-                      Field="Identifier"
-                      Caption="@L["Identifier"]">
-              </DataGridColumn>
+                <DataGridColumn TItem="SupervisedComputerDto"
+                                Field="Name"
+                                Caption="@L["Name"]">
+                </DataGridColumn>
 
-              <DataGridColumn TItem="SupervisedComputerDto"
-                      Field="IpAddress"
-                      Caption="@L["IpAddress"]">
-              </DataGridColumn>
+                <DataGridColumn TItem="SupervisedComputerDto"
+                                Field="Identifier"
+                                Caption="@L["Identifier"]">
+                </DataGridColumn>
 
-              <DataGridColumn TItem="SupervisedComputerDto"
-                      Field="IsCalendarActive"
-                      Caption="@L["IsCalendarActive"]">
+                <DataGridColumn TItem="SupervisedComputerDto"
+                                Field="IpAddress"
+                                Caption="@L["IpAddress"]">
+                </DataGridColumn>
+
+                <DataGridColumn TItem="SupervisedComputerDto"
+                                Field="IsCalendarActive"
+                                Caption="@L["IsCalendarActive"]">
                     <DisplayTemplate>
                         @if (context.IsCalendarActive)
                         {
@@ -206,323 +112,247 @@
                             <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
                         }
                     </DisplayTemplate>
-              </DataGridColumn>
+                </DataGridColumn>
 
 
-              <DataGridColumn TItem="SupervisedComputerDto"
-                      Field="BanUntil"
-                      Caption="@L["BanUntil"]">
-                  <DisplayTemplate>
+                <DataGridColumn TItem="SupervisedComputerDto"
+                                Field="BanUntil"
+                                Caption="@L["BanUntil"]">
+                    <DisplayTemplate>
                         @(context.BanUntil.HasValue ? context.BanUntil.Value.ToShortDateString() : string.Empty)
-                  </DisplayTemplate>
-              </DataGridColumn>
+                    </DisplayTemplate>
+                </DataGridColumn>
 
             </DataGridColumns>
-            
+
             <DetailRowTemplate>
-    <div class="bg-light rounded p-3 pb-0 pt-1">
-        <Tabs SelectedTab="@SelectedChildTab" SelectedTabChanged="@OnSelectedChildTabChanged">
-            <Items>
-                <Tab Name="snitchinglog-tab">@L["SnitchingLogs"]</Tab>
-<Tab Name="activityrecord-tab">@L["ActivityRecords"]</Tab>
-<Tab Name="calendar-tab">@L["Calendars"]</Tab>
-<Tab Name="knownprocess-tab">@L["KnownProcesses"]</Tab>
-            </Items>
-            
-            <Content>
-                                        <TabPanel Name="snitchinglog-tab" Class="mt-0">
-                            @if (CanCreateSnitchingLog)
-                            {
-                                <Row Class="mb-2">
-                                    <Column Class="d-flex justify-content-end">
-                                        <Button Color="Color.Primary" Clicked="async () => await OpenCreateSnitchingLogModalAsync(context.Id)">
-                                            <i class="fas fa-plus me-1"></i>@L["NewSnitchingLog"]
-                                        </Button>
-                                    </Column>
-                                </Row>
-                            }
+                <div class="bg-light rounded p-3 pb-0 pt-1">
+                    <Tabs SelectedTab="@SelectedChildTab" SelectedTabChanged="@OnSelectedChildTabChanged">
+                        <Items>
+                            <Tab Name="snitchinglog-tab">@L["SnitchingLogs"]</Tab>
+                                <Tab Name="activityrecord-tab">@L["ActivityRecords"]</Tab>
+                                <Tab Name="calendar-tab">@L["Calendars"]</Tab>
+                                <Tab Name="knownprocess-tab">@L["KnownProcesses"]</Tab>
+                            </Items>
 
-                            @{
-                                var snitchingLogs = (context as SupervisedComputerDto).SnitchingLogs;
+                            <Content>
+                                <TabPanel Name="snitchinglog-tab" Class="mt-0">
 
-                                <DataGrid @ref="@SnitchingLogDataGrids[context.Id]"
-                                          TItem="SnitchingLogDto"
-                                          Data="snitchingLogs"
-                                          ReadData="@((args) => OnSnitchingLogDataGridReadAsync(args, context.Id))"
-                                          Sortable="true"
-                                          ShowCaptions="true"
-                                          ShowPager="true"
-                                          Responsive="true"
-                                          PageSize="SnitchingLogPageSize">
+                                    @{
+                                    var snitchingLogs = (context as SupervisedComputerDto).SnitchingLogs;
 
-                                    <DataGridColumns>
+                                    <DataGrid @ref="@SnitchingLogDataGrids[context.Id]"
+                                              TItem="SnitchingLogDto"
+                                              Data="snitchingLogs"
+                                              ReadData="@((args) => OnSnitchingLogDataGridReadAsync(args, context.Id))"
+                                              Sortable="true"
+                                              ShowCaptions="true"
+                                              ShowPager="true"
+                                              Responsive="true"
+                                              PageSize="SnitchingLogPageSize">
 
-                                        <DataGridEntityActionsColumn TItem="SnitchingLogDto" @ref="@SnitchingLogEntityActionsColumns">
-                                            <DisplayTemplate Context="snitching_log_context">
-                                                <EntityActions TItem="SnitchingLogDto" EntityActionsColumn="@SnitchingLogEntityActionsColumns">
-                                                    <EntityAction TItem="SnitchingLogDto"
-                                                                  Visible="@CanEditSnitchingLog"
-                                                                  Clicked="async () => await OpenEditSnitchingLogModalAsync(snitching_log_context)"
-                                                                  Text="@L["Edit"]">
-                                                    </EntityAction>
-                                                    <EntityAction TItem="SnitchingLogDto"
-                                                                  Visible="@CanDeleteSnitchingLog"
-                                                                  Clicked="async () => await DeleteSnitchingLogAsync(snitching_log_context)"
-                                                                  ConfirmationMessage="@(() => L["DeleteConfirmationMessage"])"
-                                                                  Text="@L["Delete"]">
-                                                    </EntityAction>
-                                                </EntityActions>
-                                            </DisplayTemplate>
-                                        </DataGridEntityActionsColumn>
+                                        <DataGridColumns>
 
-                                        <DataGridCommandColumn/>
-
-                                        
-              <DataGridColumn TItem="SnitchingLogDto"
-                      Field="Timestamp"
-                      Caption="@L["Timestamp"]">
-                  <DisplayTemplate Context="ctx1">
+                                            <DataGridColumn TItem="SnitchingLogDto"
+                                                            Field="Timestamp"
+                                                            Caption="@L["Timestamp"]">
+                                                <DisplayTemplate Context="ctx1">
                                                     @ctx1.Timestamp.ToShortDateString()
-                  </DisplayTemplate>
-              </DataGridColumn>
+                                                </DisplayTemplate>
+                                            </DataGridColumn>
 
-              <DataGridColumn TItem="SnitchingLogDto"
-                      Field="Message"
-                      Caption="@L["Message"]">
-              </DataGridColumn>
+                                            <DataGridColumn TItem="SnitchingLogDto"
+                                                            Field="Message"
+                                                            Caption="@L["Message"]">
+                                            </DataGridColumn>
 
-                                    </DataGridColumns>
-                                </DataGrid>
-                            }
-                        </TabPanel>
-                        <TabPanel Name="activityrecord-tab" Class="mt-0">
-                            @if (CanCreateActivityRecord)
-                            {
-                                <Row Class="mb-2">
-                                    <Column Class="d-flex justify-content-end">
-                                        <Button Color="Color.Primary" Clicked="async () => await OpenCreateActivityRecordModalAsync(context.Id)">
-                                            <i class="fas fa-plus me-1"></i>@L["NewActivityRecord"]
-                                        </Button>
-                                    </Column>
-                                </Row>
-                            }
+                                        </DataGridColumns>
+                                    </DataGrid>
+                                }
+                            </TabPanel>
+                            <TabPanel Name="activityrecord-tab" Class="mt-0">
 
-                            @{
-                                var activityRecords = (context as SupervisedComputerDto).ActivityRecords;
+                                @{
+                                    var activityRecords = (context as SupervisedComputerDto).ActivityRecords;
 
-                                <DataGrid @ref="@ActivityRecordDataGrids[context.Id]"
-                                          TItem="ActivityRecordDto"
-                                          Data="activityRecords"
-                                          ReadData="@((args) => OnActivityRecordDataGridReadAsync(args, context.Id))"
-                                          Sortable="true"
-                                          ShowCaptions="true"
-                                          ShowPager="true"
-                                          Responsive="true"
-                                          PageSize="ActivityRecordPageSize">
+                                    <DataGrid @ref="@ActivityRecordDataGrids[context.Id]"
+                                              TItem="ActivityRecordDto"
+                                              Data="activityRecords"
+                                              ReadData="@((args) => OnActivityRecordDataGridReadAsync(args, context.Id))"
+                                              Sortable="true"
+                                              ShowCaptions="true"
+                                              ShowPager="true"
+                                              Responsive="true"
+                                              PageSize="ActivityRecordPageSize">
 
-                                    <DataGridColumns>
+                                        <DataGridColumns>
 
-                                        <DataGridEntityActionsColumn TItem="ActivityRecordDto" @ref="@ActivityRecordEntityActionsColumns">
-                                            <DisplayTemplate Context="activity_record_context">
-                                                <EntityActions TItem="ActivityRecordDto" EntityActionsColumn="@ActivityRecordEntityActionsColumns">
-                                                    <EntityAction TItem="ActivityRecordDto"
-                                                                  Visible="@CanEditActivityRecord"
-                                                                  Clicked="async () => await OpenEditActivityRecordModalAsync(activity_record_context)"
-                                                                  Text="@L["Edit"]">
-                                                    </EntityAction>
-                                                    <EntityAction TItem="ActivityRecordDto"
-                                                                  Visible="@CanDeleteActivityRecord"
-                                                                  Clicked="async () => await DeleteActivityRecordAsync(activity_record_context)"
-                                                                  ConfirmationMessage="@(() => L["DeleteConfirmationMessage"])"
-                                                                  Text="@L["Delete"]">
-                                                    </EntityAction>
-                                                </EntityActions>
-                                            </DisplayTemplate>
-                                        </DataGridEntityActionsColumn>
-
-                                        <DataGridCommandColumn/>
-
-                                        
-              <DataGridColumn TItem="ActivityRecordDto"
-                      Field="StartTime"
-                      Caption="@L["StartTime"]">
+                                            <DataGridColumn TItem="ActivityRecordDto"
+                                                            Field="StartTime"
+                                                            Caption="@L["StartTime"]">
                                                 <DisplayTemplate Context="ctx2">
                                                     @ctx2.StartTime.ToShortDateString()
-                  </DisplayTemplate>
-              </DataGridColumn>
+                                                </DisplayTemplate>
+                                            </DataGridColumn>
 
-              <DataGridColumn TItem="ActivityRecordDto"
-                      Field="EndTime"
-                      Caption="@L["EndTime"]">
+                                            <DataGridColumn TItem="ActivityRecordDto"
+                                                            Field="EndTime"
+                                                            Caption="@L["EndTime"]">
                                                 <DisplayTemplate Context="ctx3">
                                                     @(ctx3.EndTime.HasValue ? ctx3.EndTime.Value.ToShortDateString() : string.Empty)
-                  </DisplayTemplate>
-              </DataGridColumn>
+                                                </DisplayTemplate>
+                                            </DataGridColumn>
 
-              <DataGridColumn TItem="ActivityRecordDto"
-                      Field="DetectedProcesses"
-                      Caption="@L["DetectedProcesses"]">
-              </DataGridColumn>
+                                            <DataGridColumn TItem="ActivityRecordDto"
+                                                            Field="DetectedProcesses"
+                                                            Caption="@L["DetectedProcesses"]">
+                                            </DataGridColumn>
 
-                                    </DataGridColumns>
-                                </DataGrid>
-                            }
-                        </TabPanel>
-                        <TabPanel Name="calendar-tab" Class="mt-0">
-                            @if (CanCreateCalendar)
-                            {
-                                <Row Class="mb-2">
-                                    <Column Class="d-flex justify-content-end">
-                                        <Button Color="Color.Primary" Clicked="async () => await OpenCreateCalendarModalAsync(context.Id)">
-                                            <i class="fas fa-plus me-1"></i>@L["NewCalendar"]
-                                        </Button>
-                                    </Column>
-                                </Row>
-                            }
+                                        </DataGridColumns>
+                                    </DataGrid>
+                                }
+                            </TabPanel>
+                            <TabPanel Name="calendar-tab" Class="mt-0">
+                                @{
+                                    var calendars = (context as SupervisedComputerDto).Calendars;
 
-                            @{
-                                var calendars = (context as SupervisedComputerDto).Calendars;
+                                    <DataGrid @ref="@CalendarDataGrids[context.Id]"
+                                              TItem="CalendarDto"
+                                              Data="calendars"
+                                              ReadData="@((args) => OnCalendarDataGridReadAsync(args, context.Id))"
+                                              Sortable="true"
+                                              ShowCaptions="true"
+                                              ShowPager="true"
+                                              Responsive="true"
+                                              PageSize="CalendarPageSize">
 
-                                <DataGrid @ref="@CalendarDataGrids[context.Id]"
-                                          TItem="CalendarDto"
-                                          Data="calendars"
-                                          ReadData="@((args) => OnCalendarDataGridReadAsync(args, context.Id))"
-                                          Sortable="true"
-                                          ShowCaptions="true"
-                                          ShowPager="true"
-                                          Responsive="true"
-                                          PageSize="CalendarPageSize">
+                                        <DataGridColumns>
 
-                                    <DataGridColumns>
+                                            <DataGridEntityActionsColumn TItem="CalendarDto" @ref="@CalendarEntityActionsColumns">
+                                                <DisplayTemplate Context="calendar_context">
+                                                    <EntityActions TItem="CalendarDto" EntityActionsColumn="@CalendarEntityActionsColumns">
+                                                        <EntityAction TItem="CalendarDto"
+                                                                      Visible="@CanEditCalendar"
+                                                                      Clicked="async () => await OpenEditCalendarModalAsync(calendar_context)"
+                                                                      Text="@L["Edit"]">
+                                                        </EntityAction>
+                                                    </EntityActions>
+                                                </DisplayTemplate>
+                                            </DataGridEntityActionsColumn>
 
-                                        <DataGridEntityActionsColumn TItem="CalendarDto" @ref="@CalendarEntityActionsColumns">
-                                            <DisplayTemplate Context="calendar_context">
-                                                <EntityActions TItem="CalendarDto" EntityActionsColumn="@CalendarEntityActionsColumns">
-                                                    <EntityAction TItem="CalendarDto"
-                                                                  Visible="@CanEditCalendar"
-                                                                  Clicked="async () => await OpenEditCalendarModalAsync(calendar_context)"
-                                                                  Text="@L["Edit"]">
-                                                    </EntityAction>
-                                                    <EntityAction TItem="CalendarDto"
-                                                                  Visible="@CanDeleteCalendar"
-                                                                  Clicked="async () => await DeleteCalendarAsync(calendar_context)"
-                                                                  ConfirmationMessage="@(() => L["DeleteConfirmationMessage"])"
-                                                                  Text="@L["Delete"]">
-                                                    </EntityAction>
-                                                </EntityActions>
-                                            </DisplayTemplate>
-                                        </DataGridEntityActionsColumn>
+                                            <DataGridCommandColumn />
 
-                                        <DataGridCommandColumn/>
 
-                                        
-              <DataGridColumn TItem="CalendarDto"
-                      Field="DayOfWeek"
-                      Caption="@L["DayOfWeek"]">
-              </DataGridColumn>
+                                            <DataGridColumn TItem="CalendarDto"
+                                                            Field="DayOfWeek"
+                                                            Caption="@L["DayOfWeek"]">
+                                                <DisplayTemplate Context="calendar_context">
+                                                    <Span>@(((DayOfWeek)calendar_context.DayOfWeek).ToString())</Span>
+                                                </DisplayTemplate>
+                                            </DataGridColumn>
 
-              <DataGridColumn TItem="CalendarDto"
-                      Field="AllowedHours"
-                      Caption="@L["AllowedHours"]">
-              </DataGridColumn>
+                                            <DataGridColumn TItem="CalendarDto"
+                                                            Field="AllowedHours"
+                                                            Caption="@L["AllowedHours"]">
+                                            </DataGridColumn>
 
-                                    </DataGridColumns>
-                                </DataGrid>
-                            }
-                        </TabPanel>
-                        <TabPanel Name="knownprocess-tab" Class="mt-0">
-                            @if (CanCreateKnownProcess)
-                            {
-                                <Row Class="mb-2">
-                                    <Column Class="d-flex justify-content-end">
-                                        <Button Color="Color.Primary" Clicked="async () => await OpenCreateKnownProcessModalAsync(context.Id)">
-                                            <i class="fas fa-plus me-1"></i>@L["NewKnownProcess"]
-                                        </Button>
-                                    </Column>
-                                </Row>
-                            }
+                                        </DataGridColumns>
+                                    </DataGrid>
+                                }
+                            </TabPanel>
+                            <TabPanel Name="knownprocess-tab" Class="mt-0">
+                                @if (CanCreateKnownProcess)
+                                {
+                                    <Row Class="mb-2">
+                                        <Column Class="d-flex justify-content-end">
+                                            <Button Color="Color.Primary" Clicked="async () => await OpenCreateKnownProcessModalAsync(context.Id)">
+                                                <i class="fas fa-plus me-1"></i>@L["NewKnownProcess"]
+                                            </Button>
+                                        </Column>
+                                    </Row>
+                                }
 
-                            @{
-                                var knownProcesses = (context as SupervisedComputerDto).KnownProcesses;
+                                @{
+                                    var knownProcesses = (context as SupervisedComputerDto).KnownProcesses;
 
-                                <DataGrid @ref="@KnownProcessDataGrids[context.Id]"
-                                          TItem="KnownProcessDto"
-                                          Data="knownProcesses"
-                                          ReadData="@((args) => OnKnownProcessDataGridReadAsync(args, context.Id))"
-                                          Sortable="true"
-                                          ShowCaptions="true"
-                                          ShowPager="true"
-                                          Responsive="true"
-                                          PageSize="KnownProcessPageSize">
+                                    <DataGrid @ref="@KnownProcessDataGrids[context.Id]"
+                                              TItem="KnownProcessDto"
+                                              Data="knownProcesses"
+                                              ReadData="@((args) => OnKnownProcessDataGridReadAsync(args, context.Id))"
+                                              Sortable="true"
+                                              ShowCaptions="true"
+                                              ShowPager="true"
+                                              Responsive="true"
+                                              PageSize="KnownProcessPageSize">
 
-                                    <DataGridColumns>
+                                        <DataGridColumns>
 
-                                        <DataGridEntityActionsColumn TItem="KnownProcessDto" @ref="@KnownProcessEntityActionsColumns">
-                                            <DisplayTemplate Context="known_process_context">
-                                                <EntityActions TItem="KnownProcessDto" EntityActionsColumn="@KnownProcessEntityActionsColumns">
-                                                    <EntityAction TItem="KnownProcessDto"
-                                                                  Visible="@CanEditKnownProcess"
-                                                                  Clicked="async () => await OpenEditKnownProcessModalAsync(known_process_context)"
-                                                                  Text="@L["Edit"]">
-                                                    </EntityAction>
-                                                    <EntityAction TItem="KnownProcessDto"
-                                                                  Visible="@CanDeleteKnownProcess"
-                                                                  Clicked="async () => await DeleteKnownProcessAsync(known_process_context)"
-                                                                  ConfirmationMessage="@(() => L["DeleteConfirmationMessage"])"
-                                                                  Text="@L["Delete"]">
-                                                    </EntityAction>
-                                                </EntityActions>
-                                            </DisplayTemplate>
-                                        </DataGridEntityActionsColumn>
+                                            <DataGridEntityActionsColumn TItem="KnownProcessDto" @ref="@KnownProcessEntityActionsColumns">
+                                                <DisplayTemplate Context="known_process_context">
+                                                    <EntityActions TItem="KnownProcessDto" EntityActionsColumn="@KnownProcessEntityActionsColumns">
+                                                        <EntityAction TItem="KnownProcessDto"
+                                                                      Visible="@CanEditKnownProcess"
+                                                                      Clicked="async () => await OpenEditKnownProcessModalAsync(known_process_context)"
+                                                                      Text="@L["Edit"]">
+                                                        </EntityAction>
+                                                        <EntityAction TItem="KnownProcessDto"
+                                                                      Visible="@CanDeleteKnownProcess"
+                                                                      Clicked="async () => await DeleteKnownProcessAsync(known_process_context)"
+                                                                      ConfirmationMessage="@(() => L["DeleteConfirmationMessage"])"
+                                                                      Text="@L["Delete"]">
+                                                        </EntityAction>
+                                                    </EntityActions>
+                                                </DisplayTemplate>
+                                            </DataGridEntityActionsColumn>
 
-                                        <DataGridCommandColumn/>
+                                            <DataGridCommandColumn />
 
-                                        
-              <DataGridColumn TItem="KnownProcessDto"
-                      Field="Name"
-                      Caption="@L["Name"]">
-              </DataGridColumn>
 
-              <DataGridColumn TItem="KnownProcessDto"
-                      Field="IsHidden"
-                      Caption="@L["IsHidden"]">
+                                            <DataGridColumn TItem="KnownProcessDto"
+                                                            Field="Name"
+                                                            Caption="@L["Name"]">
+                                            </DataGridColumn>
+
+                                            <DataGridColumn TItem="KnownProcessDto"
+                                                            Field="IsHidden"
+                                                            Caption="@L["IsHidden"]">
                                                 <DisplayTemplate Context="ctx4">
                                                     @if (ctx4.IsHidden)
-                        {
-                            <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
-                        }
-                        else
-                        {
-                            <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
-                        }
-                    </DisplayTemplate>
-              </DataGridColumn>
+                                                    {
+                                                        <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
+                                                    }
+                                                </DisplayTemplate>
+                                            </DataGridColumn>
 
 
-              <DataGridColumn TItem="KnownProcessDto"
-                      Field="IsImportant"
-                      Caption="@L["IsImportant"]">
+                                            <DataGridColumn TItem="KnownProcessDto"
+                                                            Field="IsImportant"
+                                                            Caption="@L["IsImportant"]">
                                                 <DisplayTemplate Context="ctx5">
                                                     @if (ctx5.IsImportant)
-                        {
-                            <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
-                        }
-                        else
-                        {
-                            <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
-                        }
-                    </DisplayTemplate>
-              </DataGridColumn>
+                                                    {
+                                                        <Icon TextColor="TextColor.Success" Name="@IconName.Check" />
+                                                    }
+                                                    else
+                                                    {
+                                                        <Icon TextColor="TextColor.Danger" Name="@IconName.Times" />
+                                                    }
+                                                </DisplayTemplate>
+                                            </DataGridColumn>
 
 
-                                    </DataGridColumns>
-                                </DataGrid>
-                            }
-                        </TabPanel>
-            </Content>
-        </Tabs>
-    </div>
-</DetailRowTemplate>
+                                        </DataGridColumns>
+                                    </DataGrid>
+                                }
+                            </TabPanel>
+                        </Content>
+                    </Tabs>
+                </div>
+            </DetailRowTemplate>
         </DataGrid>
     </CardBody>
 </Card>
@@ -534,19 +364,19 @@
         <Form id="CreateSupervisedComputerForm">
             <ModalHeader>
                 <ModalTitle>@L["NewSupervisedComputer"]</ModalTitle>
-                <CloseButton Clicked="CloseCreateSupervisedComputerModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@NewSupervisedComputerValidations"
-                            Mode="ValidationMode.Auto"
-                            Model="@NewSupervisedComputer"
-                            ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["Name"] *</FieldLabel>
-                            <TextEdit @bind-Text="@NewSupervisedComputer.Name" MaxLength="SupervisedComputerConsts.NameMaxLength" >
+                    <CloseButton Clicked="CloseCreateSupervisedComputerModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@NewSupervisedComputerValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@NewSupervisedComputer"
+                                 ValidateOnLoad="false">
+
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["Name"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewSupervisedComputer.Name" MaxLength="SupervisedComputerConsts.NameMaxLength">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -558,7 +388,7 @@
                     <Validation>
                         <Field>
                             <FieldLabel>@L["Identifier"] *</FieldLabel>
-                            <TextEdit @bind-Text="@NewSupervisedComputer.Identifier" MaxLength="SupervisedComputerConsts.IdentifierMaxLength" >
+                            <TextEdit @bind-Text="@NewSupervisedComputer.Identifier" MaxLength="SupervisedComputerConsts.IdentifierMaxLength">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -570,39 +400,39 @@
                     <Validation>
                         <Field>
                             <FieldLabel>@L["IpAddress"]</FieldLabel>
-                            <TextEdit @bind-Text="@NewSupervisedComputer.IpAddress" MaxLength="SupervisedComputerConsts.IpAddressMaxLength" >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                                <TextEdit @bind-Text="@NewSupervisedComputer.IpAddress" MaxLength="SupervisedComputerConsts.IpAddressMaxLength">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
 
 
-                    <Field>
-                        <Check TValue="bool" @bind-Checked="@NewSupervisedComputer.IsCalendarActive" >@L["IsCalendarActive"]</Check>
-                    </Field>
-
-                    <Validation>
                         <Field>
-                            <FieldLabel>@L["BanUntil"]</FieldLabel>
-                            <DateEdit TValue="DateTime?" InputMode="DateInputMode.DateTime" @bind-Date="@NewSupervisedComputer.BanUntil" >
-                               <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </DateEdit>
+                            <Check TValue="bool" @bind-Checked="@NewSupervisedComputer.IsCalendarActive">@L["IsCalendarActive"]</Check>
                         </Field>
-                    </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["BanUntil"]</FieldLabel>
+                                <DateEdit TValue="DateTime?" InputMode="DateInputMode.DateTime" @bind-Date="@NewSupervisedComputer.BanUntil">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </DateEdit>
+                            </Field>
+                        </Validation>
 
 
-                    
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseCreateSupervisedComputerModalAsync">
-                    @L["Cancel"]
+
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseCreateSupervisedComputerModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="CreateSupervisedComputerForm" Clicked="CreateSupervisedComputerAsync" />
 
@@ -619,19 +449,19 @@
         <Form id="EditSupervisedComputerForm">
             <ModalHeader>
                 <ModalTitle>@L["Update"]</ModalTitle>
-                <CloseButton Clicked="CloseEditSupervisedComputerModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@EditingSupervisedComputerValidations"
-                            Mode="ValidationMode.Auto"
-                            Model="@EditingSupervisedComputer"
-                            ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["Name"] *</FieldLabel>
-                            <TextEdit @bind-Text="@EditingSupervisedComputer.Name" MaxLength="SupervisedComputerConsts.NameMaxLength" >
+                    <CloseButton Clicked="CloseEditSupervisedComputerModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@EditingSupervisedComputerValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@EditingSupervisedComputer"
+                                 ValidateOnLoad="false">
+
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["Name"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingSupervisedComputer.Name" MaxLength="SupervisedComputerConsts.NameMaxLength">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -643,7 +473,7 @@
                     <Validation>
                         <Field>
                             <FieldLabel>@L["Identifier"] *</FieldLabel>
-                            <TextEdit @bind-Text="@EditingSupervisedComputer.Identifier" MaxLength="SupervisedComputerConsts.IdentifierMaxLength" >
+                            <TextEdit @bind-Text="@EditingSupervisedComputer.Identifier" MaxLength="SupervisedComputerConsts.IdentifierMaxLength">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -655,39 +485,39 @@
                     <Validation>
                         <Field>
                             <FieldLabel>@L["IpAddress"]</FieldLabel>
-                            <TextEdit @bind-Text="@EditingSupervisedComputer.IpAddress" MaxLength="SupervisedComputerConsts.IpAddressMaxLength" >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                                <TextEdit @bind-Text="@EditingSupervisedComputer.IpAddress" MaxLength="SupervisedComputerConsts.IpAddressMaxLength">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
 
 
-                    <Field>
-                        <Check TValue="bool" @bind-Checked="@EditingSupervisedComputer.IsCalendarActive" >@L["IsCalendarActive"]</Check>
-                    </Field>
-
-                    <Validation>
                         <Field>
-                            <FieldLabel>@L["BanUntil"]</FieldLabel>
-                            <DateEdit TValue="DateTime?" InputMode="DateInputMode.DateTime" @bind-Date="@EditingSupervisedComputer.BanUntil" >
-                               <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </DateEdit>
+                            <Check TValue="bool" @bind-Checked="@EditingSupervisedComputer.IsCalendarActive">@L["IsCalendarActive"]</Check>
                         </Field>
-                    </Validation>
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["BanUntil"]</FieldLabel>
+                                <DateEdit TValue="DateTime?" InputMode="DateInputMode.DateTime" @bind-Date="@EditingSupervisedComputer.BanUntil">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </DateEdit>
+                            </Field>
+                        </Validation>
 
 
-                    
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseEditSupervisedComputerModalAsync">
-                    @L["Cancel"]
+
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseEditSupervisedComputerModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="EditSupervisedComputerForm" Clicked="UpdateSupervisedComputerAsync" />
 
@@ -703,46 +533,46 @@
         <Form id="CreateSnitchingLogForm">
             <ModalHeader>
                 <ModalTitle>@L["NewSnitchingLog"]</ModalTitle>
-                <CloseButton Clicked="CloseCreateSnitchingLogModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@NewSnitchingLogValidations"
-                             Mode="ValidationMode.Auto"
-                             Model="@NewSnitchingLog"
-                             ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["Timestamp"]</FieldLabel>
-                            <DateEdit TValue="DateTime" InputMode="DateInputMode.DateTime" @bind-Date="@NewSnitchingLog.Timestamp" >
-                               <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </DateEdit>
-                        </Field>
-                    </Validation>
+                    <CloseButton Clicked="CloseCreateSnitchingLogModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@NewSnitchingLogValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@NewSnitchingLog"
+                                 ValidateOnLoad="false">
 
 
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["Message"]</FieldLabel>
-                            <TextEdit @bind-Text="@NewSnitchingLog.Message"  >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["Timestamp"]</FieldLabel>
+                                <DateEdit TValue="DateTime" InputMode="DateInputMode.DateTime" @bind-Date="@NewSnitchingLog.Timestamp">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </DateEdit>
+                            </Field>
+                        </Validation>
 
 
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseCreateSnitchingLogModalAsync">
-                    @L["Cancel"]
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["Message"]</FieldLabel>
+                                <TextEdit @bind-Text="@NewSnitchingLog.Message">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
+
+
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseCreateSnitchingLogModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="CreateSnitchingLogForm" Clicked="CreateSnitchingLogAsync" />
             </ModalFooter>
@@ -756,46 +586,46 @@
         <Form id="EditSnitchingLogForm">
             <ModalHeader>
                 <ModalTitle>@L["Update"]</ModalTitle>
-                <CloseButton Clicked="CloseEditSnitchingLogModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@EditingSnitchingLogValidations"
-                             Mode="ValidationMode.Auto"
-                             Model="@EditingSnitchingLog"
-                             ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["Timestamp"]</FieldLabel>
-                            <DateEdit TValue="DateTime" InputMode="DateInputMode.DateTime" @bind-Date="@EditingSnitchingLog.Timestamp" >
-                               <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </DateEdit>
-                        </Field>
-                    </Validation>
+                    <CloseButton Clicked="CloseEditSnitchingLogModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@EditingSnitchingLogValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@EditingSnitchingLog"
+                                 ValidateOnLoad="false">
 
 
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["Message"]</FieldLabel>
-                            <TextEdit @bind-Text="@EditingSnitchingLog.Message"  >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["Timestamp"]</FieldLabel>
+                                <DateEdit TValue="DateTime" InputMode="DateInputMode.DateTime" @bind-Date="@EditingSnitchingLog.Timestamp">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </DateEdit>
+                            </Field>
+                        </Validation>
 
 
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseEditSnitchingLogModalAsync">
-                    @L["Cancel"]
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["Message"]</FieldLabel>
+                                <TextEdit @bind-Text="@EditingSnitchingLog.Message">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
+
+
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseEditSnitchingLogModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="EditSnitchingLogForm" Clicked="UpdateSnitchingLogAsync" />
             </ModalFooter>
@@ -808,58 +638,58 @@
         <Form id="CreateActivityRecordForm">
             <ModalHeader>
                 <ModalTitle>@L["NewActivityRecord"]</ModalTitle>
-                <CloseButton Clicked="CloseCreateActivityRecordModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@NewActivityRecordValidations"
-                             Mode="ValidationMode.Auto"
-                             Model="@NewActivityRecord"
-                             ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["StartTime"]</FieldLabel>
-                            <DateEdit TValue="DateTime" InputMode="DateInputMode.DateTime" @bind-Date="@NewActivityRecord.StartTime" >
-                               <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </DateEdit>
-                        </Field>
-                    </Validation>
+                    <CloseButton Clicked="CloseCreateActivityRecordModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@NewActivityRecordValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@NewActivityRecord"
+                                 ValidateOnLoad="false">
 
 
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["EndTime"]</FieldLabel>
-                            <DateEdit TValue="DateTime?" InputMode="DateInputMode.DateTime" @bind-Date="@NewActivityRecord.EndTime" >
-                               <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </DateEdit>
-                        </Field>
-                    </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["StartTime"]</FieldLabel>
+                                <DateEdit TValue="DateTime" InputMode="DateInputMode.DateTime" @bind-Date="@NewActivityRecord.StartTime">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </DateEdit>
+                            </Field>
+                        </Validation>
 
 
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["DetectedProcesses"]</FieldLabel>
-                            <TextEdit @bind-Text="@NewActivityRecord.DetectedProcesses"  >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["EndTime"]</FieldLabel>
+                                <DateEdit TValue="DateTime?" InputMode="DateInputMode.DateTime" @bind-Date="@NewActivityRecord.EndTime">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </DateEdit>
+                            </Field>
+                        </Validation>
 
 
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseCreateActivityRecordModalAsync">
-                    @L["Cancel"]
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["DetectedProcesses"]</FieldLabel>
+                                <TextEdit @bind-Text="@NewActivityRecord.DetectedProcesses">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
+
+
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseCreateActivityRecordModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="CreateActivityRecordForm" Clicked="CreateActivityRecordAsync" />
             </ModalFooter>
@@ -873,58 +703,58 @@
         <Form id="EditActivityRecordForm">
             <ModalHeader>
                 <ModalTitle>@L["Update"]</ModalTitle>
-                <CloseButton Clicked="CloseEditActivityRecordModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@EditingActivityRecordValidations"
-                             Mode="ValidationMode.Auto"
-                             Model="@EditingActivityRecord"
-                             ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["StartTime"]</FieldLabel>
-                            <DateEdit TValue="DateTime" InputMode="DateInputMode.DateTime" @bind-Date="@EditingActivityRecord.StartTime" >
-                               <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </DateEdit>
-                        </Field>
-                    </Validation>
+                    <CloseButton Clicked="CloseEditActivityRecordModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@EditingActivityRecordValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@EditingActivityRecord"
+                                 ValidateOnLoad="false">
 
 
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["EndTime"]</FieldLabel>
-                            <DateEdit TValue="DateTime?" InputMode="DateInputMode.DateTime" @bind-Date="@EditingActivityRecord.EndTime" >
-                               <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </DateEdit>
-                        </Field>
-                    </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["StartTime"]</FieldLabel>
+                                <DateEdit TValue="DateTime" InputMode="DateInputMode.DateTime" @bind-Date="@EditingActivityRecord.StartTime">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </DateEdit>
+                            </Field>
+                        </Validation>
 
 
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["DetectedProcesses"]</FieldLabel>
-                            <TextEdit @bind-Text="@EditingActivityRecord.DetectedProcesses"  >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["EndTime"]</FieldLabel>
+                                <DateEdit TValue="DateTime?" InputMode="DateInputMode.DateTime" @bind-Date="@EditingActivityRecord.EndTime">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </DateEdit>
+                            </Field>
+                        </Validation>
 
 
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseEditActivityRecordModalAsync">
-                    @L["Cancel"]
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["DetectedProcesses"]</FieldLabel>
+                                <TextEdit @bind-Text="@EditingActivityRecord.DetectedProcesses">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
+
+
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseEditActivityRecordModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="EditActivityRecordForm" Clicked="UpdateActivityRecordAsync" />
             </ModalFooter>
@@ -937,46 +767,46 @@
         <Form id="CreateCalendarForm">
             <ModalHeader>
                 <ModalTitle>@L["NewCalendar"]</ModalTitle>
-                <CloseButton Clicked="CloseCreateCalendarModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@NewCalendarValidations"
-                             Mode="ValidationMode.Auto"
-                             Model="@NewCalendar"
-                             ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["DayOfWeek"]</FieldLabel>
-                            <NumericPicker TValue="int" @bind-Value="@NewCalendar.DayOfWeek"  Decimals="0" >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                             </NumericPicker>
-                        </Field>
-                     </Validation>
+                    <CloseButton Clicked="CloseCreateCalendarModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@NewCalendarValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@NewCalendar"
+                                 ValidateOnLoad="false">
 
 
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["AllowedHours"]</FieldLabel>
-                            <TextEdit @bind-Text="@NewCalendar.AllowedHours"  >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["DayOfWeek"]</FieldLabel>
+                                <NumericPicker TValue="int" @bind-Value="@NewCalendar.DayOfWeek" Decimals="0">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </NumericPicker>
+                            </Field>
+                        </Validation>
 
 
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseCreateCalendarModalAsync">
-                    @L["Cancel"]
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["AllowedHours"]</FieldLabel>
+                                <TextEdit @bind-Text="@NewCalendar.AllowedHours">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
+
+
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseCreateCalendarModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="CreateCalendarForm" Clicked="CreateCalendarAsync" />
             </ModalFooter>
@@ -990,46 +820,46 @@
         <Form id="EditCalendarForm">
             <ModalHeader>
                 <ModalTitle>@L["Update"]</ModalTitle>
-                <CloseButton Clicked="CloseEditCalendarModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@EditingCalendarValidations"
-                             Mode="ValidationMode.Auto"
-                             Model="@EditingCalendar"
-                             ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["DayOfWeek"]</FieldLabel>
-                            <NumericPicker TValue="int" @bind-Value="@EditingCalendar.DayOfWeek"  Decimals="0" >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                             </NumericPicker>
-                        </Field>
-                     </Validation>
+                    <CloseButton Clicked="CloseEditCalendarModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@EditingCalendarValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@EditingCalendar"
+                                 ValidateOnLoad="false">
 
 
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["AllowedHours"]</FieldLabel>
-                            <TextEdit @bind-Text="@EditingCalendar.AllowedHours"  >
-                                <Feedback>
-                                    <ValidationError />
-                                </Feedback>
-                            </TextEdit>
-                        </Field>
-                    </Validation>
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["DayOfWeek"]</FieldLabel>
+                                <NumericPicker TValue="int" @bind-Value="@EditingCalendar.DayOfWeek" Decimals="0" ReadOnly="true">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </NumericPicker>
+                            </Field>
+                        </Validation>
 
 
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseEditCalendarModalAsync">
-                    @L["Cancel"]
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["AllowedHours"]</FieldLabel>
+                                <TextEdit @bind-Text="@EditingCalendar.AllowedHours">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Validation>
+
+
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseEditCalendarModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="EditCalendarForm" Clicked="UpdateCalendarAsync" />
             </ModalFooter>
@@ -1042,19 +872,19 @@
         <Form id="CreateKnownProcessForm">
             <ModalHeader>
                 <ModalTitle>@L["NewKnownProcess"]</ModalTitle>
-                <CloseButton Clicked="CloseCreateKnownProcessModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@NewKnownProcessValidations"
-                             Mode="ValidationMode.Auto"
-                             Model="@NewKnownProcess"
-                             ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["Name"] *</FieldLabel>
-                            <TextEdit @bind-Text="@NewKnownProcess.Name" MaxLength="KnownProcessConsts.NameMaxLength" >
+                    <CloseButton Clicked="CloseCreateKnownProcessModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@NewKnownProcessValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@NewKnownProcess"
+                                 ValidateOnLoad="false">
+
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["Name"] *</FieldLabel>
+                            <TextEdit @bind-Text="@NewKnownProcess.Name" MaxLength="KnownProcessConsts.NameMaxLength">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -1064,20 +894,20 @@
 
 
                     <Field>
-                        <Check TValue="bool" @bind-Checked="@NewKnownProcess.IsHidden" >@L["IsHidden"]</Check>
-                    </Field>
+                        <Check TValue="bool" @bind-Checked="@NewKnownProcess.IsHidden">@L["IsHidden"]</Check>
+                        </Field>
 
-                    <Field>
-                        <Check TValue="bool" @bind-Checked="@NewKnownProcess.IsImportant" >@L["IsImportant"]</Check>
-                    </Field>
+                        <Field>
+                            <Check TValue="bool" @bind-Checked="@NewKnownProcess.IsImportant">@L["IsImportant"]</Check>
+                        </Field>
 
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseCreateKnownProcessModalAsync">
-                    @L["Cancel"]
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseCreateKnownProcessModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="CreateKnownProcessForm" Clicked="CreateKnownProcessAsync" />
             </ModalFooter>
@@ -1091,19 +921,19 @@
         <Form id="EditKnownProcessForm">
             <ModalHeader>
                 <ModalTitle>@L["Update"]</ModalTitle>
-                <CloseButton Clicked="CloseEditKnownProcessModalAsync" />
-            </ModalHeader>
-            <ModalBody>
-                <Validations @ref="@EditingKnownProcessValidations"
-                             Mode="ValidationMode.Auto"
-                             Model="@EditingKnownProcess"
-                             ValidateOnLoad="false">
-                     
-                    
-                    <Validation>
-                        <Field>
-                            <FieldLabel>@L["Name"] *</FieldLabel>
-                            <TextEdit @bind-Text="@EditingKnownProcess.Name" MaxLength="KnownProcessConsts.NameMaxLength" >
+                    <CloseButton Clicked="CloseEditKnownProcessModalAsync" />
+                </ModalHeader>
+                <ModalBody>
+                    <Validations @ref="@EditingKnownProcessValidations"
+                                 Mode="ValidationMode.Auto"
+                                 Model="@EditingKnownProcess"
+                                 ValidateOnLoad="false">
+
+
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["Name"] *</FieldLabel>
+                            <TextEdit @bind-Text="@EditingKnownProcess.Name" MaxLength="KnownProcessConsts.NameMaxLength">
                                 <Feedback>
                                     <ValidationError />
                                 </Feedback>
@@ -1113,20 +943,20 @@
 
 
                     <Field>
-                        <Check TValue="bool" @bind-Checked="@EditingKnownProcess.IsHidden" >@L["IsHidden"]</Check>
-                    </Field>
+                        <Check TValue="bool" @bind-Checked="@EditingKnownProcess.IsHidden">@L["IsHidden"]</Check>
+                        </Field>
 
-                    <Field>
-                        <Check TValue="bool" @bind-Checked="@EditingKnownProcess.IsImportant" >@L["IsImportant"]</Check>
-                    </Field>
+                        <Field>
+                            <Check TValue="bool" @bind-Checked="@EditingKnownProcess.IsImportant">@L["IsImportant"]</Check>
+                        </Field>
 
-                    
-                </Validations>
-            </ModalBody>
-            <ModalFooter>
-                <Button Color="Color.Secondary"
-                        Clicked="CloseEditKnownProcessModalAsync">
-                    @L["Cancel"]
+
+                    </Validations>
+                </ModalBody>
+                <ModalFooter>
+                    <Button Color="Color.Secondary"
+                            Clicked="CloseEditKnownProcessModalAsync">
+                        @L["Cancel"]
                 </Button>
                 <SubmitButton Form="EditKnownProcessForm" Clicked="UpdateKnownProcessAsync" />
             </ModalFooter>
