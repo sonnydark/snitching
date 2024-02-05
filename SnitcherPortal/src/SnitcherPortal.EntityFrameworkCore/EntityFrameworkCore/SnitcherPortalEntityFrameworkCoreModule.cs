@@ -1,3 +1,6 @@
+using SnitcherPortal.SnitchingLogs;
+using SnitcherPortal.ActivityRecords;
+using SnitcherPortal.SupervisedComputers;
 using System;
 using Microsoft.Extensions.DependencyInjection;
 using Volo.Abp.Uow;
@@ -46,15 +49,21 @@ public class SnitcherPortalEntityFrameworkCoreModule : AbpModule
     {
         context.Services.AddAbpDbContext<SnitcherPortalDbContext>(options =>
         {
-                /* Remove "includeAllEntities: true" to create
-                 * default repositories only for aggregate roots */
+            /* Remove "includeAllEntities: true" to create
+             * default repositories only for aggregate roots */
             options.AddDefaultRepositories(includeAllEntities: true);
+            options.AddRepository<SupervisedComputer, SupervisedComputers.EfCoreSupervisedComputerRepository>();
+
+            options.AddRepository<ActivityRecord, ActivityRecords.EfCoreActivityRecordRepository>();
+
+            options.AddRepository<SnitchingLog, SnitchingLogs.EfCoreSnitchingLogRepository>();
+
         });
 
         Configure<AbpDbContextOptions>(options =>
         {
-                /* The main point to change your DBMS.
-                 * See also SnitcherPortalDbContextFactory for EF Core tooling. */
+            /* The main point to change your DBMS.
+             * See also SnitcherPortalDbContextFactory for EF Core tooling. */
             options.UseSqlServer();
         });
 

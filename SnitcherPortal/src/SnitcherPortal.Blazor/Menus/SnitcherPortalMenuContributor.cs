@@ -1,4 +1,6 @@
-﻿using System.Threading.Tasks;
+using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using System.Threading.Tasks;
 using SnitcherPortal.Localization;
 using SnitcherPortal.Permissions;
 using Volo.Abp.AuditLogging.Blazor.Menus;
@@ -107,6 +109,14 @@ public class SnitcherPortalMenuContributor : IMenuContributor
         //Administration->Settings
         administration.SetSubItemOrder(SettingManagementMenus.GroupName, 6);
 
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                SnitcherPortalMenus.SupervisedComputers,
+                l["Menu:SupervisedComputers"],
+                url: "/supervised-computers",
+                icon: "fa fa-file-alt",
+                requiredPermissionName: SnitcherPortalPermissions.SupervisedComputers.Default)
+        );
         return Task.CompletedTask;
     }
 }

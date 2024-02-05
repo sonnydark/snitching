@@ -1,3 +1,7 @@
+using SnitcherPortal.SnitchingLogs;
+using SnitcherPortal.ActivityRecords;
+using SnitcherPortal.SupervisedComputers;
+using Volo.Abp.EntityFrameworkCore.Modeling;
 using Microsoft.EntityFrameworkCore;
 using Volo.Abp.AuditLogging.EntityFrameworkCore;
 using Volo.Abp.BackgroundJobs.EntityFrameworkCore;
@@ -28,6 +32,9 @@ public class SnitcherPortalDbContext :
     IIdentityProDbContext,
     ISaasDbContext
 {
+    public DbSet<SnitchingLog> SnitchingLogs { get; set; } = null!;
+    public DbSet<ActivityRecord> ActivityRecords { get; set; } = null!;
+    public DbSet<SupervisedComputer> SupervisedComputers { get; set; } = null!;
     /* Add DbSet properties for your Aggregate Roots / Entities here. */
 
     #region Entities from the modules
@@ -92,5 +99,71 @@ public class SnitcherPortalDbContext :
         //    b.ConfigureByConvention(); //auto configure for the base class props
         //    //...
         //});
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<SnitchingLog>(b =>
+            {
+                b.ToTable(SnitcherPortalConsts.DbTablePrefix + "SnitchingLogs", SnitcherPortalConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Timestamp).HasColumnName(nameof(SnitchingLog.Timestamp));
+                b.Property(x => x.Message).HasColumnName(nameof(SnitchingLog.Message));
+                b.HasOne<SupervisedComputer>().WithMany(x => x.SnitchingLogs).HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<SupervisedComputer>(b =>
+            {
+                b.ToTable(SnitcherPortalConsts.DbTablePrefix + "SupervisedComputers", SnitcherPortalConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.Name).HasColumnName(nameof(SupervisedComputer.Name)).IsRequired().HasMaxLength(SupervisedComputerConsts.NameMaxLength);
+                b.Property(x => x.Identifier).HasColumnName(nameof(SupervisedComputer.Identifier)).IsRequired().HasMaxLength(SupervisedComputerConsts.IdentifierMaxLength);
+                b.Property(x => x.IpAddress).HasColumnName(nameof(SupervisedComputer.IpAddress)).HasMaxLength(SupervisedComputerConsts.IpAddressMaxLength);
+                b.Property(x => x.Calendar).HasColumnName(nameof(SupervisedComputer.Calendar));
+                b.Property(x => x.IsCalendarActive).HasColumnName(nameof(SupervisedComputer.IsCalendarActive));
+                b.Property(x => x.BanUntil).HasColumnName(nameof(SupervisedComputer.BanUntil));
+                b.HasMany(x => x.SnitchingLogs).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+                b.HasMany(x => x.ActivityRecords).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
+        if (builder.IsHostDatabase())
+        {
+            builder.Entity<ActivityRecord>(b =>
+            {
+                b.ToTable(SnitcherPortalConsts.DbTablePrefix + "ActivityRecords", SnitcherPortalConsts.DbSchema);
+                b.ConfigureByConvention();
+                b.Property(x => x.StartTime).HasColumnName(nameof(ActivityRecord.StartTime));
+                b.Property(x => x.EndTime).HasColumnName(nameof(ActivityRecord.EndTime));
+                b.Property(x => x.DetectedProcesses).HasColumnName(nameof(ActivityRecord.DetectedProcesses));
+                b.HasOne<SupervisedComputer>().WithMany(x => x.ActivityRecords).HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
+            });
+
+        }
     }
 }

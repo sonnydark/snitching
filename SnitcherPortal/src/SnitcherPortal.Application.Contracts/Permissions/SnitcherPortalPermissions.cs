@@ -13,4 +13,28 @@ public static class SnitcherPortalPermissions
 
     //Add your own permission names. Example:
     //public const string MyPermission1 = GroupName + ".MyPermission1";
+
+    public static class SupervisedComputers
+    {
+        public const string Default = GroupName + ".SupervisedComputers";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class ActivityRecords
+    {
+        public const string Default = GroupName + ".ActivityRecords";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
+
+    public static class SnitchingLogs
+    {
+        public const string Default = GroupName + ".SnitchingLogs";
+        public const string Edit = Default + ".Edit";
+        public const string Create = Default + ".Create";
+        public const string Delete = Default + ".Delete";
+    }
 }

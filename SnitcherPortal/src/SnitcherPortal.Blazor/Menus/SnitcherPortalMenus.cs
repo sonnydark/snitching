@@ -1,4 +1,4 @@
-﻿namespace SnitcherPortal.Blazor.Menus;
+namespace SnitcherPortal.Blazor.Menus;
 
 public class SnitcherPortalMenus
 {
@@ -7,6 +7,6 @@ public class SnitcherPortalMenus
     public const string HostDashboard = Prefix + ".HostDashboard";
     public const string TenantDashboard = Prefix + ".TenantDashboard";
 
-    //Add your menu items here...
+    public const string SupervisedComputers = Prefix + ".SupervisedComputers";
 
 }

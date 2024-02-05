@@ -16,6 +16,21 @@ public class SnitcherPortalPermissionDefinitionProvider : PermissionDefinitionPr
 
         //Define your own permissions here. Example:
         //myGroup.AddPermission(SnitcherPortalPermissions.MyPermission1, L("Permission:MyPermission1"));
+
+        var supervisedComputerPermission = myGroup.AddPermission(SnitcherPortalPermissions.SupervisedComputers.Default, L("Permission:SupervisedComputers"));
+        supervisedComputerPermission.AddChild(SnitcherPortalPermissions.SupervisedComputers.Create, L("Permission:Create"));
+        supervisedComputerPermission.AddChild(SnitcherPortalPermissions.SupervisedComputers.Edit, L("Permission:Edit"));
+        supervisedComputerPermission.AddChild(SnitcherPortalPermissions.SupervisedComputers.Delete, L("Permission:Delete"));
+
+        var activityRecordPermission = myGroup.AddPermission(SnitcherPortalPermissions.ActivityRecords.Default, L("Permission:ActivityRecords"));
+        activityRecordPermission.AddChild(SnitcherPortalPermissions.ActivityRecords.Create, L("Permission:Create"));
+        activityRecordPermission.AddChild(SnitcherPortalPermissions.ActivityRecords.Edit, L("Permission:Edit"));
+        activityRecordPermission.AddChild(SnitcherPortalPermissions.ActivityRecords.Delete, L("Permission:Delete"));
+
+        var snitchingLogPermission = myGroup.AddPermission(SnitcherPortalPermissions.SnitchingLogs.Default, L("Permission:SnitchingLogs"));
+        snitchingLogPermission.AddChild(SnitcherPortalPermissions.SnitchingLogs.Create, L("Permission:Create"));
+        snitchingLogPermission.AddChild(SnitcherPortalPermissions.SnitchingLogs.Edit, L("Permission:Edit"));
+        snitchingLogPermission.AddChild(SnitcherPortalPermissions.SnitchingLogs.Delete, L("Permission:Delete"));
     }
 
     private static LocalizableString L(string name)
