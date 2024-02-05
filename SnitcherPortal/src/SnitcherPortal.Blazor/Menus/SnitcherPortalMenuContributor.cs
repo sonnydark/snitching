@@ -1,5 +1,3 @@
-using System.Collections.Generic;
-using Microsoft.AspNetCore.Authorization;
 using System.Threading.Tasks;
 using SnitcherPortal.Localization;
 using SnitcherPortal.Permissions;
@@ -28,62 +26,7 @@ public class SnitcherPortalMenuContributor : IMenuContributor
     private Task ConfigureMainMenuAsync(MenuConfigurationContext context)
     {
         var l = context.GetLocalizer<SnitcherPortalResource>();
-
-        context.Menu.Items.Insert(
-            0,
-            new ApplicationMenuItem(
-                SnitcherPortalMenus.Home,
-                l["Menu:Home"],
-                "/",
-                icon: "fas fa-home",
-                order: 1
-            )
-        );
-
-        //HostDashboard
-        context.Menu.AddItem(
-            new ApplicationMenuItem(
-                SnitcherPortalMenus.HostDashboard,
-                l["Menu:Dashboard"],
-                "~/HostDashboard",
-                icon: "fa fa-line-chart",
-                order: 2
-            ).RequirePermissions(SnitcherPortalPermissions.Dashboard.Host)
-        );
-
-        //TenantDashboard
-        context.Menu.AddItem(
-            new ApplicationMenuItem(
-                SnitcherPortalMenus.TenantDashboard,
-                l["Menu:Dashboard"],
-                "~/Dashboard",
-                icon: "fa fa-line-chart",
-                order: 2
-            ).RequirePermissions(SnitcherPortalPermissions.Dashboard.Tenant)
-        );
-
-        /* Example nested menu definition:
-
-        context.Menu.AddItem(
-            new ApplicationMenuItem("Menu0", "Menu Level 0")
-            .AddItem(new ApplicationMenuItem("Menu0.1", "Menu Level 0.1", url: "/test01"))
-            .AddItem(
-                new ApplicationMenuItem("Menu0.2", "Menu Level 0.2")
-                    .AddItem(new ApplicationMenuItem("Menu0.2.1", "Menu Level 0.2.1", url: "/test021"))
-                    .AddItem(new ApplicationMenuItem("Menu0.2.2", "Menu Level 0.2.2")
-                        .AddItem(new ApplicationMenuItem("Menu0.2.2.1", "Menu Level 0.2.2.1", "/test0221"))
-                        .AddItem(new ApplicationMenuItem("Menu0.2.2.2", "Menu Level 0.2.2.2", "/test0222"))
-                    )
-                    .AddItem(new ApplicationMenuItem("Menu0.2.3", "Menu Level 0.2.3", url: "/test023"))
-                    .AddItem(new ApplicationMenuItem("Menu0.2.4", "Menu Level 0.2.4", url: "/test024")
-                        .AddItem(new ApplicationMenuItem("Menu0.2.4.1", "Menu Level 0.2.4.1", "/test0241"))
-                )
-                .AddItem(new ApplicationMenuItem("Menu0.2.5", "Menu Level 0.2.5", url: "/test025"))
-            )
-            .AddItem(new ApplicationMenuItem("Menu0.2", "Menu Level 0.2", url: "/test02"))
-        );
-
-        */
+        context.Menu.TryRemoveMenuItem(SaasHostMenus.GroupName);
 
         context.Menu.SetSubItemOrder(SaasHostMenus.GroupName, 3);
 
@@ -117,6 +60,7 @@ public class SnitcherPortalMenuContributor : IMenuContributor
                 icon: "fa fa-file-alt",
                 requiredPermissionName: SnitcherPortalPermissions.SupervisedComputers.Default)
         );
+
         return Task.CompletedTask;
     }
 }
