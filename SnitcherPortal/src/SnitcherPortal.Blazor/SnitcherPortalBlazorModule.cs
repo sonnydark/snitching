@@ -61,6 +61,9 @@ using Volo.Abp.VirtualFileSystem;
 using Volo.Saas.Host;
 using Volo.Saas.Host.Blazor;
 using Volo.Saas.Host.Blazor.Server;
+using System.Threading.Tasks;
+using Volo.Abp.Application.Dtos;
+using SnitcherPortal.Engine;
 
 namespace SnitcherPortal.Blazor;
 
@@ -397,5 +400,16 @@ public class SnitcherPortalBlazorModule : AbpModule
         app.UseAuditing();
         app.UseAbpSerilogEnrichers();
         app.UseConfiguredEndpoints();
+    }
+
+    public async override Task OnPostApplicationInitializationAsync(ApplicationInitializationContext context)
+    {
+        var snitchingJob = context.ServiceProvider.GetRequiredService<SnitchingJob>();
+        LimitedResultRequestDto.MaxMaxResultCount = int.MaxValue;
+        try
+        {
+            snitchingJob.Start();
+        }
+        catch { }
     }
 }

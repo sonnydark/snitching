@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.Domain.Repositories;
@@ -31,5 +32,7 @@ namespace SnitcherPortal.SupervisedComputers
             DateTime? banUntilMin = null,
             DateTime? banUntilMax = null,
             CancellationToken cancellationToken = default);
+
+        Task<IQueryable<SupervisedComputer>> GetQueryableNoTrackingAsync(bool includeDetails = false);
     }
 }

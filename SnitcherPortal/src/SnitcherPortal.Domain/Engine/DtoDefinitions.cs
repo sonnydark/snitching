@@ -1,4 +1,6 @@
-﻿namespace SnitcherServer.Interface;
+﻿using System.Collections.Generic;
+
+namespace SnitcherPortal.Engine;
 
 public class SnitchingDataDto
 {

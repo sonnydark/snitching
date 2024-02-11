@@ -70,5 +70,29 @@ namespace SnitcherPortal.SupervisedComputers
                     .WhereIf(banUntilMin.HasValue, e => e.BanUntil >= banUntilMin!.Value)
                     .WhereIf(banUntilMax.HasValue, e => e.BanUntil <= banUntilMax!.Value);
         }
+
+        public virtual async Task<IQueryable<SupervisedComputer>> GetQueryableNoTrackingAsync(bool includeDetails = false)
+        {
+            var query = includeDetails ? await WithDetailsAsync() : await this.GetQueryableAsync();
+            return query.AsNoTracking();
+        }
+
+        public override async Task<IQueryable<SupervisedComputer>> WithDetailsAsync()
+        {
+            return (await GetQueryableAsync()).IncludeDetails();
+        }
+    }
+
+    public static class IncludeDetailsExtension
+    {
+        public static IQueryable<SupervisedComputer> IncludeDetails(this IQueryable<SupervisedComputer> queryable)
+        {
+            return queryable
+                .Include(e => e.SnitchingLogs)
+                .Include(e => e.ActivityRecords)
+                .Include(e => e.Calendars)
+                .Include(e => e.KnownProcesses)
+                .AsSplitQuery();
+        }
     }
 }

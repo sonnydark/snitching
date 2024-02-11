@@ -1,37 +1,28 @@
-﻿using SnitcherServer.Interface;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 
 namespace SnitcherServer.Services;
 
 public static class NastyStuffService
 {
-    public static List<RunningProcessDto> GetProcesses()
+    public static List<string> GetProcesses()
     {
-        var result = new List<RunningProcessDto>();
-        var processes = Process.GetProcesses().ToList();
-
-        foreach (var process in processes)
-        {
-            var runningProcessDto = new RunningProcessDto()
-            {
-                ProcessName = process.ProcessName,
-            };
-
-            try
-            {
-                runningProcessDto.StartTime = process.StartTime;
-            }
-            catch (Exception) { }
-
-            result.Add(runningProcessDto);
-        }
-
-        return result;
+        return Process.GetProcesses().ToList().Select(p => p.ProcessName).ToList();
     }
 
-    public static void KillProcess(string processName)
+    public static bool KillProcess(List<string> processNames)
     {
-        var process = Process.GetProcesses().Where(p => p.ProcessName == processName).FirstOrDefault();
-        process?.Kill();
+        var procesList = Process.GetProcesses()
+            .Where(p => processNames.Any(pn => pn.ToLower().Contains(p.ProcessName.ToLower()))).ToList();
+
+        if (procesList.Count == 0)
+        {
+            return false;
+        }
+
+        foreach (var proces in procesList)
+        {
+            proces.Kill();
+        }
+        return true;
     }
 }

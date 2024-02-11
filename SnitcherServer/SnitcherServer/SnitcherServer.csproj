@@ -2,9 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
-    <Nullable>disable</Nullable>
+    <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <OutputType>WinExe</OutputType>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="DeviceId" Version="6.6.0" />
+  </ItemGroup>
 
 </Project>

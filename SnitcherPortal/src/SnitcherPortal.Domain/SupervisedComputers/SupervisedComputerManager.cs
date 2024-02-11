@@ -38,7 +38,7 @@ namespace SnitcherPortal.SupervisedComputers
 
         public virtual async Task<SupervisedComputer> UpdateAsync(
             Guid id,
-            string name, string identifier, bool isCalendarActive, string? ipAddress = null, DateTime? banUntil = null, [CanBeNull] string? concurrencyStamp = null
+            string name, string identifier, bool isCalendarActive, SupervisedComputerStatus status, string? ipAddress = null, DateTime? banUntil = null, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
@@ -53,6 +53,7 @@ namespace SnitcherPortal.SupervisedComputers
             supervisedComputer.Identifier = identifier;
             supervisedComputer.IsCalendarActive = isCalendarActive;
             supervisedComputer.IpAddress = ipAddress;
+            supervisedComputer.Status = status;
             supervisedComputer.BanUntil = banUntil;
 
             supervisedComputer.SetConcurrencyStampIfNotNull(concurrencyStamp);

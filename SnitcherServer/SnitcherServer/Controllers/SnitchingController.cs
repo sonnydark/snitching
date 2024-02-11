@@ -1,3 +1,4 @@
+using DeviceId;
 using Microsoft.AspNetCore.Mvc;
 using SnitcherServer.Interface;
 using SnitcherServer.Services;
@@ -13,26 +14,46 @@ namespace SnitcherServer.Controllers
         }
 
         [HttpGet]
-        public SnitchingDataDto Get()
+        [Route("status")]
+        public SnitchingDataDto GetStatus()
         {
+            string? machineIdentifier = null;
+            List<string>? processes = null;
+            List<string>? logs = null;
+
+            try
+            {
+                machineIdentifier = new DeviceIdBuilder().AddMachineName().ToString();
+                logs = Services.AppDomain.Instance.Logs;
+                processes = NastyStuffService.GetProcesses();
+                Services.AppDomain.Instance.Logs = new List<string>();
+            }
+            catch (Exception ex)
+            {
+                logs = logs == null ? new List<string>() : null;
+                logs!.Add(ex.ToString());
+            }
+
             return new SnitchingDataDto()
             {
-                Processes = NastyStuffService.GetProcesses(),
-                Config = RuntimeConfigService.GetConfigJson()
+                MachineIdentifier = machineIdentifier,
+                Logs = logs,
+                Processes = processes,
             };
         }
 
         [HttpPut]
-        public void Put(string processName)
+        [Route("kill")]
+        public void KillProcesses(List<string> processNames)
         {
-            NastyStuffService.KillProcess(processName);
-        }
-
-        [HttpPut]
-        [Route("configure")]
-        public void Configure(RuntimeConfigDto config)
-        {
-            RuntimeConfigService.SetConfig(config);
+            try
+            {
+                NastyStuffService.KillProcess(processNames);
+            }
+            catch (Exception ex)
+            {
+                Services.AppDomain.Instance.Logs.Add(ex.ToString());
+            }
         }
     }
 }

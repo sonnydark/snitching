@@ -6,8 +6,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 
-builder.Services.AddHostedService<WatchdogService>();
-
 var app = builder.Build();
 app.Urls.Add("http://0.0.0.0:8080");
 

@@ -103,7 +103,7 @@ namespace SnitcherPortal.Blazor.Pages
         private bool CanDeleteKnownProcess { get; set; }
         private KnownProcessCreateDto NewKnownProcess { get; set; }
         private Dictionary<Guid, DataGrid<KnownProcessDto>> KnownProcessDataGrids { get; set; } = new();
-        private int KnownProcessPageSize { get; } = 5;
+        private int KnownProcessPageSize { get; } = int.MaxValue;
         private DataGridEntityActionsColumn<KnownProcessDto> KnownProcessEntityActionsColumns { get; set; } = new();
         private Validations NewKnownProcessValidations { get; set; } = new();
         private Modal CreateKnownProcessModal { get; set; } = new();

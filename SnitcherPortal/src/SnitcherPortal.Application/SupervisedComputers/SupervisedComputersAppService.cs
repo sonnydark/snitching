@@ -63,6 +63,7 @@ namespace SnitcherPortal.SupervisedComputers
             var supervisedComputer = await _supervisedComputerManager.CreateAsync(
             input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil
             );
+            supervisedComputer.Status = SupervisedComputerStatus.OFFLINE;
 
             await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Monday);
             await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Tuesday);
@@ -78,10 +79,9 @@ namespace SnitcherPortal.SupervisedComputers
         [Authorize(SnitcherPortalPermissions.SupervisedComputers.Edit)]
         public virtual async Task<SupervisedComputerDto> UpdateAsync(Guid id, SupervisedComputerUpdateDto input)
         {
-
             var supervisedComputer = await _supervisedComputerManager.UpdateAsync(
             id,
-            input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil, input.ConcurrencyStamp
+            input.Name, input.Identifier, input.IsCalendarActive, input.Status, input.IpAddress, input.BanUntil, input.ConcurrencyStamp
             );
 
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
