@@ -8,7 +8,8 @@ namespace SnitcherPortal.ActivityRecords
     {
         public Guid SupervisedComputerId { get; set; }
         public DateTime StartTime { get; set; }
+        public DateTime LastUpdateTime { get; set; }
         public DateTime? EndTime { get; set; }
-        public string? DetectedProcesses { get; set; }
+        public string? Data { get; set; }
     }
 }

@@ -134,8 +134,8 @@
                 <div class="bg-light rounded p-3 pb-0 pt-1">
                     <Tabs SelectedTab="@SelectedChildTab" SelectedTabChanged="@OnSelectedChildTabChanged">
                         <Items>
-                            <Tab Name="snitchinglog-tab">@L["SnitchingLogs"]</Tab>
                                 <Tab Name="activityrecord-tab">@L["ActivityRecords"]</Tab>
+                                <Tab Name="snitchinglog-tab">@L["SnitchingLogs"]</Tab>
                                 <Tab Name="calendar-tab">@L["Calendars"]</Tab>
                                 <Tab Name="knownprocess-tab">@L["KnownProcesses"]</Tab>
                             </Items>
@@ -162,7 +162,7 @@
                                                             Field="Timestamp"
                                                             Caption="@L["Timestamp"]">
                                                 <DisplayTemplate Context="ctx1">
-                                                    @ctx1.Timestamp.ToShortDateString()
+                                                    @ctx1.Timestamp.ToString("yyyy dd.MM HH:mm")
                                                 </DisplayTemplate>
                                             </DataGridColumn>
 
@@ -196,7 +196,7 @@
                                                             Field="StartTime"
                                                             Caption="@L["StartTime"]">
                                                 <DisplayTemplate Context="ctx2">
-                                                    @ctx2.StartTime.ToShortDateString()
+                                                    @ctx2.StartTime.ToString("yyyy dd.MM HH:mm")
                                                 </DisplayTemplate>
                                             </DataGridColumn>
 
@@ -204,13 +204,13 @@
                                                             Field="EndTime"
                                                             Caption="@L["EndTime"]">
                                                 <DisplayTemplate Context="ctx3">
-                                                    @(ctx3.EndTime.HasValue ? ctx3.EndTime.Value.ToShortDateString() : string.Empty)
+                                                    @(ctx3.EndTime.HasValue ? ctx3.EndTime.Value.ToString("yyyy dd.MM HH:mm") : string.Empty)
                                                 </DisplayTemplate>
                                             </DataGridColumn>
 
                                             <DataGridColumn TItem="ActivityRecordDto"
-                                                            Field="DetectedProcesses"
-                                                            Caption="@L["DetectedProcesses"]">
+                                                            Field="Data"
+                                                            Caption="@L["Data"]">
                                             </DataGridColumn>
 
                                         </DataGridColumns>
@@ -270,8 +270,16 @@
                                 {
                                     <Row Class="mb-2">
                                         <Column Class="d-flex justify-content-end">
-                                            <Button Color="Color.Primary" Clicked="async () => await OpenCreateKnownProcessModalAsync(context.Id)">
+                                            <Button Color="Color.Primary" Class="ms-2" Clicked="async () => await OpenCreateKnownProcessModalAsync(context.Id)">
                                                 <i class="fas fa-plus me-1"></i>@L["NewKnownProcess"]
+                                            </Button>
+
+                                            <Button Color="Color.Primary" Class="ms-2" Clicked="async () => await MarkUnmarkHiddenAsync(context.Id, true)">
+                                                <i class="fas fa-check me-1"></i>@L["Mark all as hidden"]
+                                            </Button>
+
+                                            <Button Color="Color.Primary" Class="ms-2" Clicked="async () => await MarkUnmarkHiddenAsync(context.Id, false)">
+                                                <i class="fas fa-ban me-1"></i>@L["Unmark all hidden"]
                                             </Button>
                                         </Column>
                                     </Row>
@@ -678,8 +686,8 @@
 
                         <Validation>
                             <Field>
-                                <FieldLabel>@L["DetectedProcesses"]</FieldLabel>
-                                <TextEdit @bind-Text="@NewActivityRecord.DetectedProcesses">
+                                <FieldLabel>@L["Data"]</FieldLabel>
+                                <TextEdit @bind-Text="@NewActivityRecord.Data">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -743,8 +751,8 @@
 
                         <Validation>
                             <Field>
-                                <FieldLabel>@L["DetectedProcesses"]</FieldLabel>
-                                <TextEdit @bind-Text="@EditingActivityRecord.DetectedProcesses">
+                                <FieldLabel>@L["Data"]</FieldLabel>
+                                <TextEdit @bind-Text="@EditingActivityRecord.Data">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -933,8 +941,6 @@
                                  Mode="ValidationMode.Auto"
                                  Model="@EditingKnownProcess"
                                  ValidateOnLoad="false">
-
-
                         <Validation>
                             <Field>
                                 <FieldLabel>@L["Name"] *</FieldLabel>
@@ -946,7 +952,6 @@
                         </Field>
                     </Validation>
 
-
                     <Field>
                         <Check TValue="bool" @bind-Checked="@EditingKnownProcess.IsHidden">@L["IsHidden"]</Check>
                         </Field>
@@ -954,7 +959,6 @@
                         <Field>
                             <Check TValue="bool" @bind-Checked="@EditingKnownProcess.IsImportant">@L["IsImportant"]</Check>
                         </Field>
-
 
                     </Validations>
                 </ModalBody>

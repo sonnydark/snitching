@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SnitcherPortal.ActivityRecords;
 using SnitcherPortal.KnownProcesses;
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.SupervisedComputers;
@@ -8,6 +9,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.EventBus.Local;
 using Volo.Abp.Uow;
 
 namespace SnitcherPortal.Engine
@@ -20,22 +22,28 @@ namespace SnitcherPortal.Engine
         protected IUnitOfWorkManager _unitOfWorkManager;
         protected SnitcherClientFunctions _snitcherClientFunctions;
         protected ISupervisedComputerRepository _supervisedComputerRepository;
+        protected IActivityRecordRepository _activityRecordRepository;
         protected ISnitchingLogRepository _snitchingLogRepository;
         protected ILogger<SnitchingJob> _logger;
+        protected ILocalEventBus _localEventBus;
 
         public SnitchingJob(IUnitOfWorkManager unitOfWorkManager,
             KnownProcessManager knownProcessManager,
             SnitcherClientFunctions snitcherClientFunctions,
             ISupervisedComputerRepository supervisedComputerRepository,
+            IActivityRecordRepository activityRecordRepository,
             ISnitchingLogRepository snitchingLogRepository,
-            ILogger<SnitchingJob> logger)
+            ILogger<SnitchingJob> logger,
+            ILocalEventBus localEventBus)
         {
             _unitOfWorkManager = unitOfWorkManager;
             _knownProcessManager = knownProcessManager;
             _snitcherClientFunctions = snitcherClientFunctions;
             _supervisedComputerRepository = supervisedComputerRepository;
+            _activityRecordRepository = activityRecordRepository;
             _snitchingLogRepository = snitchingLogRepository;
             _logger = logger;
+            _localEventBus = localEventBus;
         }
 
         public void Start()
@@ -83,6 +91,8 @@ namespace SnitcherPortal.Engine
 
             try
             {
+                DashboardDataDto dashboardDataDto;
+
                 using (var unitOfWork = _unitOfWorkManager.Begin(true))
                 {
                     var supervisedComputer = (await _supervisedComputerRepository.WithDetailsAsync()).Where(sc => sc.Id == input.Id).First();
@@ -107,7 +117,7 @@ namespace SnitcherPortal.Engine
                             supervisedComputer.SnitchingLogs.Add(new SnitchingLog(Guid.NewGuid(), supervisedComputer.Id, DateTime.Now, e));
                         });
                     }
-                    var logsToRemove = supervisedComputer.SnitchingLogs.Where(e => e.Timestamp > DateTime.Now.AddDays(-7)).ToList();
+                    var logsToRemove = supervisedComputer.SnitchingLogs.Where(e => e.Timestamp < DateTime.Now.AddDays(-7)).ToList();
                     await _snitchingLogRepository.DeleteManyAsync(logsToRemove);
 
                     // Handle processes
@@ -120,9 +130,46 @@ namespace SnitcherPortal.Engine
                         });
                     }
 
+                    // Handle activity records
+                    var now = DateTime.Now;
+                    var activityRecords = (await _activityRecordRepository.GetQueryableAsync())
+                        .OrderByDescending(e => e.StartTime).Take(3).ToList();
+
+                    var activityRecord = activityRecords.FirstOrDefault(ar => ar.EndTime == null);
+                    if (activityRecord != null && activityRecord.LastUpdateTime < DateTime.Now.AddMinutes(-5))
+                    {
+                        activityRecord.EndTime = activityRecord.LastUpdateTime;
+                        await _activityRecordRepository.UpdateAsync(activityRecord);
+                        activityRecord = null;
+                    }
+
+                    if (activityRecord == null)
+                    {
+                        activityRecord = new ActivityRecord(Guid.NewGuid(), supervisedComputer.Id, now, null, null);
+                        activityRecords.Add(activityRecord);
+                        await _activityRecordRepository.InsertAsync(activityRecord);
+                    }                                        
+
+                    // Commit changes
                     await _supervisedComputerRepository.UpdateAsync(supervisedComputer);
+
+                    dashboardDataDto = DashboardMapper.Map(supervisedComputer, activityRecords, null);
                     await unitOfWork.CompleteAsync();
                 }
+
+                await _localEventBus.PublishAsync(dashboardDataDto);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogException(ex);
+            }
+        }
+
+        public async Task TriggerDashboardChangedAsync(DashboardDataDto data)
+        {
+            try
+            {
+                await _localEventBus.PublishAsync(data);
             }
             catch (Exception ex)
             {

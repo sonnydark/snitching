@@ -1,0 +1,58 @@
+﻿@page "/dashboard"
+
+@using SnitcherPortal.SupervisedComputers
+@using Volo.Abp.AspNetCore.Components
+
+@inherits AbpComponentBase
+
+@inject ActivePageService ActivePageService
+@inject ISupervisedComputersAppService SupervisedComputersAppService
+
+<Div Class="row">
+    <Div Class="col-sm-12">
+        <Dropdown>
+            <DropdownToggle Color="Color.Primary">
+                @this.Model.ComputerName
+            </DropdownToggle>
+            <DropdownMenu>
+                @foreach (var computer in this.ComputerNames)
+                {
+                    <DropdownItem Clicked="@(() => DropdownClicked(computer))">@computer</DropdownItem>
+                }
+            </DropdownMenu>
+        </Dropdown>
+    </Div>
+</Div>
+
+<Div Class="row mt-1">
+    <Div Class="col-sm-8">
+        @this.Model.ComputerName
+    </Div>
+    <Div Class="col-sm-4">
+        @this.Model.Status.ToString()
+    </Div>
+</Div>
+
+@foreach (var process in this.Model.ProcessList)
+{
+    <Div Class="row">
+        <Div Class="col-sm-12 mt-1">
+            <Button Clicked="async () => await ProcessButtonClickedAsync(process.ProcessName)">@process.ProcessName</Button>
+            </Div>
+        </Div>
+}
+
+@foreach (var activity in this.Model.ActivityList)
+{
+    <Div Class="row mt-1">
+        <Div Class="col-sm-6">
+            @activity.StartTime.ToString("yyyy dd.MM HH:mm")
+        </Div>
+        <Div Class="col-sm-6">
+            @(activity.EndTime.HasValue ? activity.EndTime!.Value.ToString("yyyy dd.MM HH:mm") : "")
+        </Div>
+        <Div Class="col-sm-6">
+            <Text>@activity.Data</Text>
+        </Div>
+    </Div>
+}

@@ -86,5 +86,17 @@ namespace SnitcherPortal.SupervisedComputers
 
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
         }
+
+        public async Task<List<string>> GetAvailableComputersAsync()
+        {
+            return (await _supervisedComputerRepository.GetQueryableNoTrackingAsync())
+                .Select(e => e.Name).ToList();
+        }
+
+        public async Task<DashboardDataDto> GetDashboardDataAsync(string computerName)
+        {
+            var supervisedComputer = (await _supervisedComputerRepository.WithDetailsAsync()).Where(sc => sc.Name == computerName).First();
+            return null;
+        }
     }
 }

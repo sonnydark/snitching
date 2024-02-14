@@ -11,6 +11,7 @@ using Volo.Abp.Application.Services;
 using Volo.Abp.Domain.Repositories;
 using SnitcherPortal.Permissions;
 using SnitcherPortal.KnownProcesses;
+using Volo.Abp.Domain.Entities;
 
 namespace SnitcherPortal.KnownProcesses
 {
@@ -88,6 +89,19 @@ namespace SnitcherPortal.KnownProcesses
             );
 
             return ObjectMapper.Map<KnownProcess, KnownProcessDto>(knownProcess);
+        }
+
+        [Authorize(SnitcherPortalPermissions.KnownProcesses.Edit)]
+        public virtual async Task MarkUnmarkHiddenAsync(Guid scId, bool mark)
+        {
+            var updateList = (await _knownProcessRepository.GetQueryableAsync())
+                .Where(kp => kp.SupervisedComputerId == scId && (!mark || kp.IsImportant == false)).ToList();
+
+            updateList.ForEach(entity =>
+            {
+                entity.IsHidden = mark;
+            });
+            await _knownProcessRepository.UpdateManyAsync(updateList);
         }
     }
 }

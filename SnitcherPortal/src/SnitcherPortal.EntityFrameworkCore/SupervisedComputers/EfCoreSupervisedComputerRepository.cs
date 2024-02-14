@@ -89,7 +89,7 @@ namespace SnitcherPortal.SupervisedComputers
         {
             return queryable
                 .Include(e => e.SnitchingLogs)
-                .Include(e => e.ActivityRecords)
+                //.Include(e => e.ActivityRecords) do not laod, they are historic records, must be handled sepparately
                 .Include(e => e.Calendars)
                 .Include(e => e.KnownProcesses)
                 .AsSplitQuery();

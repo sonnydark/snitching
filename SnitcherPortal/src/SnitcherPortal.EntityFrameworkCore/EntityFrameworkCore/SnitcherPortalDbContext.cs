@@ -151,7 +151,7 @@ public class SnitcherPortalDbContext :
                 b.ConfigureByConvention();
                 b.Property(x => x.StartTime).HasColumnName(nameof(ActivityRecord.StartTime));
                 b.Property(x => x.EndTime).HasColumnName(nameof(ActivityRecord.EndTime));
-                b.Property(x => x.DetectedProcesses).HasColumnName(nameof(ActivityRecord.DetectedProcesses));
+                b.Property(x => x.Data).HasColumnName(nameof(ActivityRecord.Data));
                 b.HasOne<SupervisedComputer>().WithMany(x => x.ActivityRecords).HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);
             });
 

@@ -13,7 +13,7 @@ namespace SnitcherPortal.ActivityRecords
         public DateTime? StartTimeMax { get; set; }
         public DateTime? EndTimeMin { get; set; }
         public DateTime? EndTimeMax { get; set; }
-        public string? DetectedProcesses { get; set; }
+        public string? Data { get; set; }
 
         public GetActivityRecordsInput()
         {

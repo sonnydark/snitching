@@ -23,14 +23,14 @@ namespace SnitcherServer.Controllers
 
             try
             {
-                machineIdentifier = new DeviceIdBuilder().AddMachineName().ToString();
                 logs = Services.AppDomain.Instance.Logs;
-                processes = NastyStuffService.GetProcesses();
                 Services.AppDomain.Instance.Logs = new List<string>();
+                machineIdentifier = new DeviceIdBuilder().AddMachineName().ToString();                
+                processes = NastyStuffService.GetProcesses();
             }
             catch (Exception ex)
             {
-                logs = logs == null ? new List<string>() : null;
+                logs ??= new List<string>();
                 logs!.Add(ex.ToString());
             }
 

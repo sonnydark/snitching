@@ -369,7 +369,7 @@ namespace SnitcherPortal.Blazor.Pages
             return CanListSnitchingLog || CanListActivityRecord || CanListCalendar || CanListKnownProcess;
         }
 
-        public string SelectedChildTab { get; set; } = "snitchinglog-tab";
+        public string SelectedChildTab { get; set; } = "activityrecord-tab";
 
         private Task OnSelectedChildTabChanged(string name)
         {
@@ -766,7 +766,8 @@ namespace SnitcherPortal.Blazor.Pages
                 Sorting = sorting
             });
 
-            supervisedComputer.KnownProcesses = knownProcesses.Items.ToList();
+            supervisedComputer.KnownProcesses = knownProcesses.Items
+                .OrderByDescending(e => e.IsImportant).ThenBy(e => e.IsHidden).ThenBy(e => e.Name).ToList();
 
             var knownProcessDataGrid = KnownProcessDataGrids[supervisedComputerId];
 
@@ -823,6 +824,19 @@ namespace SnitcherPortal.Blazor.Pages
 
             await NewKnownProcessValidations.ClearAll();
             await CreateKnownProcessModal.Show();
+        }
+
+        private async Task MarkUnmarkHiddenAsync(Guid scId, bool mark)
+        {
+            try
+            {
+                await this.KnownProcessesAppService.MarkUnmarkHiddenAsync(scId, mark);
+                await SetKnownProcessesAsync(scId);
+            }
+            catch (Exception ex)
+            {
+                await HandleErrorAsync(ex);
+            }
         }
 
         private async Task CloseCreateKnownProcessModalAsync()

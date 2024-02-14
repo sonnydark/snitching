@@ -19,13 +19,13 @@ namespace SnitcherPortal.ActivityRecords
         }
 
         public virtual async Task<ActivityRecord> CreateAsync(
-        Guid supervisedComputerId, DateTime startTime, DateTime? endTime = null, string? detectedProcesses = null)
+        Guid supervisedComputerId, DateTime startTime, DateTime? endTime = null, string? data = null)
         {
             Check.NotNull(startTime, nameof(startTime));
 
             var activityRecord = new ActivityRecord(
              GuidGenerator.Create(),
-             supervisedComputerId, startTime, endTime, detectedProcesses
+             supervisedComputerId, startTime, endTime, data
              );
 
             return await _activityRecordRepository.InsertAsync(activityRecord);
@@ -33,7 +33,7 @@ namespace SnitcherPortal.ActivityRecords
 
         public virtual async Task<ActivityRecord> UpdateAsync(
             Guid id,
-            Guid supervisedComputerId, DateTime startTime, DateTime? endTime = null, string? detectedProcesses = null
+            Guid supervisedComputerId, DateTime startTime, DateTime? endTime = null, string? data = null
         )
         {
             Check.NotNull(startTime, nameof(startTime));
@@ -43,7 +43,7 @@ namespace SnitcherPortal.ActivityRecords
             activityRecord.SupervisedComputerId = supervisedComputerId;
             activityRecord.StartTime = startTime;
             activityRecord.EndTime = endTime;
-            activityRecord.DetectedProcesses = detectedProcesses;
+            activityRecord.Data = data;
 
             return await _activityRecordRepository.UpdateAsync(activityRecord);
         }

@@ -19,5 +19,6 @@ namespace SnitcherPortal.KnownProcesses
         Task<KnownProcessDto> CreateAsync(KnownProcessCreateDto input);
 
         Task<KnownProcessDto> UpdateAsync(Guid id, KnownProcessUpdateDto input);
+        Task MarkUnmarkHiddenAsync(Guid scId, bool mark);
     }
 }

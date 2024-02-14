@@ -24,7 +24,7 @@ namespace SnitcherPortal.ActivityRecords
                     DateTime? startTimeMax = null,
                     DateTime? endTimeMin = null,
                     DateTime? endTimeMax = null,
-                    string? detectedProcesses = null,
+                    string? data = null,
                     string? sorting = null,
                     int maxResultCount = int.MaxValue,
                     int skipCount = 0,
@@ -37,7 +37,7 @@ namespace SnitcherPortal.ActivityRecords
             DateTime? startTimeMax = null,
             DateTime? endTimeMin = null,
             DateTime? endTimeMax = null,
-            string? detectedProcesses = null,
+            string? data = null,
             CancellationToken cancellationToken = default);
     }
 }

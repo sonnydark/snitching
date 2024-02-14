@@ -1,13 +1,6 @@
 using System;
-using System.Linq;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using Volo.Abp.Domain.Entities;
-using Volo.Abp.Domain.Entities.Auditing;
-using Volo.Abp.MultiTenancy;
 using JetBrains.Annotations;
-
-using Volo.Abp;
 
 namespace SnitcherPortal.ActivityRecords
 {
@@ -16,26 +9,27 @@ namespace SnitcherPortal.ActivityRecords
         public virtual Guid SupervisedComputerId { get; set; }
 
         public virtual DateTime StartTime { get; set; }
+        public virtual DateTime LastUpdateTime { get; set; }
 
         public virtual DateTime? EndTime { get; set; }
 
         [CanBeNull]
-        public virtual string? DetectedProcesses { get; set; }
+        public virtual string? Data { get; set; }
 
         protected ActivityRecord()
         {
 
         }
 
-        public ActivityRecord(Guid id, Guid supervisedComputerId, DateTime startTime, DateTime? endTime = null, string? detectedProcesses = null)
+        public ActivityRecord(Guid id, Guid supervisedComputerId, DateTime startTime, DateTime? endTime = null, string? data = null)
         {
 
             Id = id;
             SupervisedComputerId = supervisedComputerId;
             StartTime = startTime;
+            LastUpdateTime = startTime;
             EndTime = endTime;
-            DetectedProcesses = detectedProcesses;
+            Data = data;
         }
-
     }
 }

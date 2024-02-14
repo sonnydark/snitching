@@ -61,6 +61,15 @@ public class SnitcherPortalMenuContributor : IMenuContributor
                 requiredPermissionName: SnitcherPortalPermissions.SupervisedComputers.Default)
         );
 
+        context.Menu.AddItem(
+            new ApplicationMenuItem(
+                SnitcherPortalMenus.SupervisedComputers,
+                l["Menu:Dashboard"],
+                url: "/dashboard",
+                icon: "fa fa-tablet-alt",
+                requiredPermissionName: SnitcherPortalPermissions.SupervisedComputers.Default)
+        );
+
         return Task.CompletedTask;
     }
 }

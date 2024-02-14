@@ -46,8 +46,8 @@ namespace SnitcherPortal.ActivityRecords
 
         public virtual async Task<PagedResultDto<ActivityRecordDto>> GetListAsync(GetActivityRecordsInput input)
         {
-            var totalCount = await _activityRecordRepository.GetCountAsync(input.FilterText, input.StartTimeMin, input.StartTimeMax, input.EndTimeMin, input.EndTimeMax, input.DetectedProcesses);
-            var items = await _activityRecordRepository.GetListAsync(input.FilterText, input.StartTimeMin, input.StartTimeMax, input.EndTimeMin, input.EndTimeMax, input.DetectedProcesses, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var totalCount = await _activityRecordRepository.GetCountAsync(input.FilterText, input.StartTimeMin, input.StartTimeMax, input.EndTimeMin, input.EndTimeMax, input.Data);
+            var items = await _activityRecordRepository.GetListAsync(input.FilterText, input.StartTimeMin, input.StartTimeMax, input.EndTimeMin, input.EndTimeMax, input.Data, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<ActivityRecordDto>
             {
@@ -72,7 +72,7 @@ namespace SnitcherPortal.ActivityRecords
         {
 
             var activityRecord = await _activityRecordManager.CreateAsync(input.SupervisedComputerId,
-            input.StartTime, input.EndTime, input.DetectedProcesses
+            input.StartTime, input.EndTime, input.Data
             );
 
             return ObjectMapper.Map<ActivityRecord, ActivityRecordDto>(activityRecord);
@@ -84,7 +84,7 @@ namespace SnitcherPortal.ActivityRecords
 
             var activityRecord = await _activityRecordManager.UpdateAsync(
             id, input.SupervisedComputerId,
-            input.StartTime, input.EndTime, input.DetectedProcesses
+            input.StartTime, input.EndTime, input.Data
             );
 
             return ObjectMapper.Map<ActivityRecord, ActivityRecordDto>(activityRecord);

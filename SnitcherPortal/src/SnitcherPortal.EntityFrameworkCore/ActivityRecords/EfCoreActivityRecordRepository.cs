@@ -42,13 +42,13 @@ namespace SnitcherPortal.ActivityRecords
             DateTime? startTimeMax = null,
             DateTime? endTimeMin = null,
             DateTime? endTimeMax = null,
-            string? detectedProcesses = null,
+            string? data = null,
             string? sorting = null,
             int maxResultCount = int.MaxValue,
             int skipCount = 0,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetQueryableAsync()), filterText, startTimeMin, startTimeMax, endTimeMin, endTimeMax, detectedProcesses);
+            var query = ApplyFilter((await GetQueryableAsync()), filterText, startTimeMin, startTimeMax, endTimeMin, endTimeMax, data);
             query = query.OrderBy(string.IsNullOrWhiteSpace(sorting) ? ActivityRecordConsts.GetDefaultSorting(false) : sorting);
             return await query.PageBy(skipCount, maxResultCount).ToListAsync(cancellationToken);
         }
@@ -59,10 +59,10 @@ namespace SnitcherPortal.ActivityRecords
             DateTime? startTimeMax = null,
             DateTime? endTimeMin = null,
             DateTime? endTimeMax = null,
-            string? detectedProcesses = null,
+            string? data = null,
             CancellationToken cancellationToken = default)
         {
-            var query = ApplyFilter((await GetDbSetAsync()), filterText, startTimeMin, startTimeMax, endTimeMin, endTimeMax, detectedProcesses);
+            var query = ApplyFilter((await GetDbSetAsync()), filterText, startTimeMin, startTimeMax, endTimeMin, endTimeMax, data);
             return await query.LongCountAsync(GetCancellationToken(cancellationToken));
         }
 
@@ -73,15 +73,15 @@ namespace SnitcherPortal.ActivityRecords
             DateTime? startTimeMax = null,
             DateTime? endTimeMin = null,
             DateTime? endTimeMax = null,
-            string? detectedProcesses = null)
+            string? data = null)
         {
             return query
-                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.DetectedProcesses!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Data!.Contains(filterText!))
                     .WhereIf(startTimeMin.HasValue, e => e.StartTime >= startTimeMin!.Value)
                     .WhereIf(startTimeMax.HasValue, e => e.StartTime <= startTimeMax!.Value)
                     .WhereIf(endTimeMin.HasValue, e => e.EndTime >= endTimeMin!.Value)
                     .WhereIf(endTimeMax.HasValue, e => e.EndTime <= endTimeMax!.Value)
-                    .WhereIf(!string.IsNullOrWhiteSpace(detectedProcesses), e => e.DetectedProcesses.Contains(detectedProcesses));
+                    .WhereIf(!string.IsNullOrWhiteSpace(data), e => e.Data.Contains(data));
         }
     }
 }

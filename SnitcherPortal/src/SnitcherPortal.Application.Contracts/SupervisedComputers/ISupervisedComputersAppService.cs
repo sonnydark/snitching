@@ -8,6 +8,9 @@ namespace SnitcherPortal.SupervisedComputers
 {
     public interface ISupervisedComputersAppService : IApplicationService
     {
+        Task<List<string>> GetAvailableComputersAsync();
+        Task<DashboardDataDto> GetDashboardDataAsync(string computerName);
+
 
         Task<PagedResultDto<SupervisedComputerDto>> GetListAsync(GetSupervisedComputersInput input);
 
