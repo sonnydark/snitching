@@ -1,18 +1,20 @@
 ﻿@page "/dashboard"
 
+@using SnitcherPortal.Engine
 @using SnitcherPortal.SupervisedComputers
 @using Volo.Abp.AspNetCore.Components
 
 @inherits AbpComponentBase
 
 @inject ActivePageService ActivePageService
+@inject NavigationManager NavigationManager
 @inject ISupervisedComputersAppService SupervisedComputersAppService
 
 <Div Class="row">
     <Div Class="col-sm-12">
         <Dropdown>
             <DropdownToggle Color="Color.Primary">
-                @this.Model.ComputerName
+                @this.SelectedComputer
             </DropdownToggle>
             <DropdownMenu>
                 @foreach (var computer in this.ComputerNames)
@@ -25,34 +27,65 @@
 </Div>
 
 <Div Class="row mt-1">
-    <Div Class="col-sm-8">
-        @this.Model.ComputerName
+    <Div Class="col-6" Style="font-weight: bold">
+        Status:
     </Div>
-    <Div Class="col-sm-4">
+    <Div Class="col-6">
         @this.Model.Status.ToString()
     </Div>
 </Div>
 
+<Div Class="row mt-1">
+    <Div Class="col-6" Style="font-weight: bold">
+        Last update:
+    </Div>
+    <Div Class="col-6">
+        @(this.Model.LastUpdate.HasValue ? $"{(DateTime.Now - this.Model.LastUpdate.Value).Seconds} seconds ago" : "N/A")
+    </Div>
+</Div>
+
+<Label Style="font-weight: bold" Class="mt-2">Running processes</Label>
+<hr style="margin-top: 0px; margin-bottom: 15px">
 @foreach (var process in this.Model.ProcessList)
 {
     <Div Class="row">
         <Div Class="col-sm-12 mt-1">
-            <Button Clicked="async () => await ProcessButtonClickedAsync(process.ProcessName)">@process.ProcessName</Button>
+            <Button Style="width: 100%;" Color="@(process.IsImportatnt ? Color.Warning : Color.Secondary)" Clicked="async (evt) => { await ProcessButtonClickedAsync(process.ProcessName); }">@process.ProcessName</Button>
             </Div>
         </Div>
 }
 
+<Label Style="font-weight: bold;" Class="mt-2">Activity printout</Label>
+<hr style="margin-top: 0px; margin-bottom: 15px">
 @foreach (var activity in this.Model.ActivityList)
 {
-    <Div Class="row mt-1">
-        <Div Class="col-sm-6">
-            @activity.StartTime.ToString("yyyy dd.MM HH:mm")
+    <Card Style="margin-bottom: 15px">
+        <Div Class="row">
+            <Label Class="col-6 text-center" Style="font-weight: bold">
+                Start
+            </Label>
+            <Label Class="col-6 text-center" Style="font-weight: bold">
+                End
+            </Label>
         </Div>
-        <Div Class="col-sm-6">
-            @(activity.EndTime.HasValue ? activity.EndTime!.Value.ToString("yyyy dd.MM HH:mm") : "")
+        <Div Class="row">
+            <Div Class="col-6 text-center">
+                @activity.StartTime.ToString("yyyy dd.MM HH:mm")
+            </Div>
+            <Div Class="col-6 text-center">
+                @(activity.EndTime.HasValue ? activity.EndTime!.Value.ToString("yyyy dd.MM HH:mm") : "Curently active")
+            </Div>            
         </Div>
-        <Div Class="col-sm-6">
-            <Text>@activity.Data</Text>
+        <Div Class="row mt-2">
+            <Div Class="col-12 text-center">
+                <Text>@(activity.Data.IsNullOrWhiteSpace() ? "NO ACTIVITY SO FAR .." : activity.Data)</Text>
+            </Div>
         </Div>
-    </Div>
+    </Card>
 }
+
+<style>
+    .dropdown-toggle {
+        width: 100%;
+    }
+</style>

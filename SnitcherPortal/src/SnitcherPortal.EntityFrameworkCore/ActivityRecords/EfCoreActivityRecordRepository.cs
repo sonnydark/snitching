@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Volo.Abp.Domain.Repositories.EntityFrameworkCore;
 using Volo.Abp.EntityFrameworkCore;
 using SnitcherPortal.EntityFrameworkCore;
+using SnitcherPortal.SupervisedComputers;
 
 namespace SnitcherPortal.ActivityRecords
 {
@@ -82,6 +83,25 @@ namespace SnitcherPortal.ActivityRecords
                     .WhereIf(endTimeMin.HasValue, e => e.EndTime >= endTimeMin!.Value)
                     .WhereIf(endTimeMax.HasValue, e => e.EndTime <= endTimeMax!.Value)
                     .WhereIf(!string.IsNullOrWhiteSpace(data), e => e.Data.Contains(data));
+        }
+
+        public virtual async Task<IQueryable<ActivityRecord>> GetQueryableNoTrackingAsync(bool includeDetails = false)
+        {
+            var query = includeDetails ? await WithDetailsAsync() : await this.GetQueryableAsync();
+            return query.AsNoTracking();
+        }
+
+        public override async Task<IQueryable<ActivityRecord>> WithDetailsAsync()
+        {
+            return (await GetQueryableAsync()).IncludeDetails();
+        }
+    }
+
+    public static class IncludeDetailsExtension
+    {
+        public static IQueryable<ActivityRecord> IncludeDetails(this IQueryable<ActivityRecord> queryable)
+        {
+            return queryable;
         }
     }
 }

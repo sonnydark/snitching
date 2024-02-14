@@ -44,7 +44,7 @@ namespace SnitcherServer.Controllers
 
         [HttpPut]
         [Route("kill")]
-        public void KillProcesses(List<string> processNames)
+        public void KillProcesses([FromQuery] List<string> processNames)
         {
             try
             {

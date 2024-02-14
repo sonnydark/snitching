@@ -1,17 +1,16 @@
 using System;
-using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq.Dynamic.Core;
 using Microsoft.AspNetCore.Authorization;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Repositories;
 using SnitcherPortal.Permissions;
-using SnitcherPortal.SupervisedComputers;
 using SnitcherPortal.Calendars;
+using SnitcherPortal.Engine;
+using SnitcherPortal.ActivityRecords;
+using System.Text.Json;
 
 namespace SnitcherPortal.SupervisedComputers
 {
@@ -21,15 +20,21 @@ namespace SnitcherPortal.SupervisedComputers
     {
 
         protected ISupervisedComputerRepository _supervisedComputerRepository;
+        protected IActivityRecordRepository _activityRecordRepository;
         protected SupervisedComputerManager _supervisedComputerManager;
+        protected SnitcherClientFunctions _snitcherClientFunctions;
         protected CalendarManager _calendarManager;
 
         public SupervisedComputersAppService(ISupervisedComputerRepository supervisedComputerRepository,
+            IActivityRecordRepository activityRecordRepository,
             SupervisedComputerManager supervisedComputerManager,
+            SnitcherClientFunctions snitcherClientFunctions,
             CalendarManager calendarManager)
         {
             _calendarManager = calendarManager;
             _supervisedComputerRepository = supervisedComputerRepository;
+            _activityRecordRepository = activityRecordRepository;
+            _snitcherClientFunctions = snitcherClientFunctions;
             _supervisedComputerManager = supervisedComputerManager;
         }
 
@@ -59,19 +64,49 @@ namespace SnitcherPortal.SupervisedComputers
         [Authorize(SnitcherPortalPermissions.SupervisedComputers.Create)]
         public virtual async Task<SupervisedComputerDto> CreateAsync(SupervisedComputerCreateDto input)
         {
-
             var supervisedComputer = await _supervisedComputerManager.CreateAsync(
             input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil
             );
             supervisedComputer.Status = SupervisedComputerStatus.OFFLINE;
 
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Monday);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Tuesday);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Wednesday);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Thursday);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Friday);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Saturday);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Sunday);
+            JsonSerializerOptions options = new JsonSerializerOptions
+            {
+                WriteIndented = false
+            };
+
+            var calendarDefaultsWorkingDays = JsonSerializer.Serialize(new CalendarSettingsJson()
+            {
+                Quota = 5,
+                Hours =
+                [
+                    new()
+                    {
+                        Start = new TimeSpan(13, 0, 0),
+                        End = new TimeSpan(20, 0, 0)
+                    }
+                ]
+            }, options);
+
+            var calendarDefaultsWeekend = JsonSerializer.Serialize(new CalendarSettingsJson()
+            {
+                Quota = 8,
+                Hours =
+                [
+                    new()
+                    {
+                        Start = new TimeSpan(10, 0, 0),
+                        End = new TimeSpan(20, 0, 0)
+                    }
+                ]
+            }, options);
+
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Monday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Tuesday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Wednesday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Thursday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Friday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Saturday, calendarDefaultsWeekend);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Sunday, calendarDefaultsWeekend);
 
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
         }
@@ -95,8 +130,24 @@ namespace SnitcherPortal.SupervisedComputers
 
         public async Task<DashboardDataDto> GetDashboardDataAsync(string computerName)
         {
-            var supervisedComputer = (await _supervisedComputerRepository.WithDetailsAsync()).Where(sc => sc.Name == computerName).First();
-            return null;
+            var supervisedComputer = (await _supervisedComputerRepository.GetQueryableNoTrackingAsync(true)).First(sc => sc.Name == computerName);
+            var activityRecords = (await _activityRecordRepository.GetQueryableNoTrackingAsync(false))
+                .OrderByDescending(e => e.StartTime).Take(10).ToList();
+            return DashboardMapper.Map(supervisedComputer, activityRecords, null);
+        }
+
+        public async Task KillProcessAsync(string computerName, string processName)
+        {
+            var supervisedComputer = (await _supervisedComputerRepository.GetQueryableNoTrackingAsync(false)).First(sc => sc.Name == computerName);
+            await _snitcherClientFunctions.KillProcesses(supervisedComputer.IpAddress!, [processName]);
+
+            var updatedActivity = (await _activityRecordRepository.GetQueryableAsync()).FirstOrDefault(e => e.EndTime == null);
+            if (updatedActivity != null)
+            {
+                updatedActivity.Data += updatedActivity.Data.IsNullOrWhiteSpace() == false ? ", " : "";
+                updatedActivity.Data += $"'{processName}' killed manually at {DateTime.Now.ToString("HH:mm:ss")}";
+                await _activityRecordRepository.UpdateAsync(updatedActivity);
+            }
         }
     }
 }

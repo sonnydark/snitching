@@ -5,6 +5,7 @@ using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.SupervisedComputers;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
@@ -133,30 +134,41 @@ namespace SnitcherPortal.Engine
                     // Handle activity records
                     var now = DateTime.Now;
                     var activityRecords = (await _activityRecordRepository.GetQueryableAsync())
-                        .OrderByDescending(e => e.StartTime).Take(3).ToList();
+                        .OrderByDescending(e => e.StartTime).Take(10).ToList();
 
                     var activityRecord = activityRecords.FirstOrDefault(ar => ar.EndTime == null);
-                    if (activityRecord != null && activityRecord.LastUpdateTime < DateTime.Now.AddMinutes(-5))
+                    if (activityRecord != null)
                     {
-                        activityRecord.EndTime = activityRecord.LastUpdateTime;
-                        await _activityRecordRepository.UpdateAsync(activityRecord);
-                        activityRecord = null;
+                        if (activityRecord.LastUpdateTime < now.AddMinutes(-10))
+                        {
+                            activityRecord.EndTime = activityRecord.LastUpdateTime;
+                            await _activityRecordRepository.UpdateAsync(activityRecord);
+                            activityRecord = null;
+                        }
+                        else
+                        {
+                            activityRecord.LastUpdateTime = now;
+                            await _activityRecordRepository.UpdateAsync(activityRecord);
+                        }
                     }
 
                     if (activityRecord == null)
                     {
                         activityRecord = new ActivityRecord(Guid.NewGuid(), supervisedComputer.Id, now, null, null);
+                        activityRecord.LastUpdateTime = now;
                         activityRecords.Add(activityRecord);
                         await _activityRecordRepository.InsertAsync(activityRecord);
-                    }                                        
+                    }
+
+                    dashboardDataDto = DashboardMapper
+                        .Map(supervisedComputer, activityRecords.OrderByDescending(e => e.StartTime).Take(10).ToList(), data.Processes);
 
                     // Commit changes
-                    await _supervisedComputerRepository.UpdateAsync(supervisedComputer);
-
-                    dashboardDataDto = DashboardMapper.Map(supervisedComputer, activityRecords, null);
+                    await _supervisedComputerRepository.UpdateAsync(supervisedComputer);                    
                     await unitOfWork.CompleteAsync();
                 }
 
+                // TODO: Handle killing
                 await _localEventBus.PublishAsync(dashboardDataDto);
             }
             catch (Exception ex)
@@ -164,6 +176,11 @@ namespace SnitcherPortal.Engine
                 _logger.LogException(ex);
             }
         }
+
+        //public async Task HandleProcessKillingAsync(sem rovno param kvoli load times, ale save uz nie)
+        //{
+        //    // spravit toto po zobrazeni, mozno s delay XY s vlastnym await _localEventBus.PublishAsync(dashboardDataDto) .. potom to bude vyzerat ze preblikava?
+        //}
 
         public async Task TriggerDashboardChangedAsync(DashboardDataDto data)
         {

@@ -8,6 +8,7 @@ namespace SnitcherPortal.SupervisedComputers
 {
     public interface ISupervisedComputersAppService : IApplicationService
     {
+        Task KillProcessAsync(string computerName, string processName);
         Task<List<string>> GetAvailableComputersAsync();
         Task<DashboardDataDto> GetDashboardDataAsync(string computerName);
 

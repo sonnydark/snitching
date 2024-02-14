@@ -656,7 +656,7 @@ namespace SnitcherPortal.Blazor.Pages
         }
 
         private async Task OpenEditCalendarModalAsync(CalendarDto input)
-        {
+        {   
             var calendar = await CalendarsAppService.GetAsync(input.Id);
 
             EditingCalendarId = calendar.Id;

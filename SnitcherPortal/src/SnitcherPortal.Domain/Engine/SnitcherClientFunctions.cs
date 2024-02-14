@@ -30,8 +30,9 @@ public class SnitcherClientFunctions : ITransientDependency
     public async Task KillProcesses(string uri, List<string> processNames)
     {
         var client = _httpClientFactory.CreateClient();
+        client.Timeout = TimeSpan.FromMilliseconds(3000);
         client.BaseAddress = new Uri(uri);
-        string parameters = string.Join("&", processNames.Select(HttpUtility.UrlEncode));
+        string parameters = string.Join("&", processNames.Select(e => $"processNames={e}"));
         await client.PutAsync($"Snitching/kill?{parameters}", null);
     }
 }

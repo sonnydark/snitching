@@ -8,7 +8,7 @@ namespace SnitcherPortal.Engine;
 
 public static class DashboardMapper
 {
-    public static DashboardDataDto Map(SupervisedComputer entity, List<ActivityRecord> activityRecords, List<string> detectedProcessList)
+    public static DashboardDataDto Map(SupervisedComputer entity, List<ActivityRecord> activityRecords, List<string>? detectedProcessList)
     {
         var result = new DashboardDataDto
         {
@@ -42,6 +42,8 @@ public static class DashboardMapper
 
             // Order
             result.ProcessList = result.ProcessList.OrderBy(e => e.ProcessName).ToList();
+
+            result.LastUpdate = DateTime.Now;
         }
 
         return result;
