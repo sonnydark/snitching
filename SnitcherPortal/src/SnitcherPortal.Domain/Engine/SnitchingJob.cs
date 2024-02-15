@@ -177,10 +177,11 @@ namespace SnitcherPortal.Engine
             }
         }
 
-        //public async Task HandleProcessKillingAsync(sem rovno param kvoli load times, ale save uz nie)
-        //{
-        //    // spravit toto po zobrazeni, mozno s delay XY s vlastnym await _localEventBus.PublishAsync(dashboardDataDto) .. potom to bude vyzerat ze preblikava?
-        //}
+        public async Task HandleProcessKillingAsync()
+        {
+            //sem rovno param kvoli load times, ale save uz nie
+            // spravit toto po zobrazeni, mozno s delay XY s vlastnym await _localEventBus.PublishAsync(dashboardDataDto) .. potom to bude vyzerat ze preblikava?
+        }
 
         public async Task TriggerDashboardChangedAsync(DashboardDataDto data)
         {
