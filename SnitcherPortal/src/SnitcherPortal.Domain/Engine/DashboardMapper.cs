@@ -41,7 +41,7 @@ public static class DashboardMapper
             result.ProcessList = result.ProcessList.Where(e => e.IsImportatnt || !hiddenProcesses.Contains(e.ProcessName)).ToList();
 
             // Order
-            result.ProcessList = result.ProcessList.OrderBy(e => e.ProcessName).ToList();
+            result.ProcessList = result.ProcessList.OrderByDescending(e => e.IsImportatnt).ThenBy(e => e.ProcessName).ToList();
 
             result.LastUpdate = DateTime.Now;
         }

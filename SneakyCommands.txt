@@ -1,0 +1,4 @@
+tasklist /FI "IMAGENAME eq snitch*"
+
+taskkill /F /PID  26612
+

@@ -8,7 +8,6 @@ using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.ActivityRecords;
 using SnitcherPortal.Calendars;
 using SnitcherPortal.KnownProcesses;
-
 using Volo.Abp;
 using Volo.Abp.Domain.Entities.Auditing;
 

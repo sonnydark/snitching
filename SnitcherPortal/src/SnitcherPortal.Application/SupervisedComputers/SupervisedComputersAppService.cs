@@ -11,6 +11,8 @@ using SnitcherPortal.Calendars;
 using SnitcherPortal.Engine;
 using SnitcherPortal.ActivityRecords;
 using System.Text.Json;
+using Volo.Abp.EventBus.Local;
+using static EtoDefinitions;
 
 namespace SnitcherPortal.SupervisedComputers
 {
@@ -24,18 +26,21 @@ namespace SnitcherPortal.SupervisedComputers
         protected SupervisedComputerManager _supervisedComputerManager;
         protected SnitcherClientFunctions _snitcherClientFunctions;
         protected CalendarManager _calendarManager;
+        protected ILocalEventBus _localEventBus;
 
         public SupervisedComputersAppService(ISupervisedComputerRepository supervisedComputerRepository,
             IActivityRecordRepository activityRecordRepository,
             SupervisedComputerManager supervisedComputerManager,
             SnitcherClientFunctions snitcherClientFunctions,
-            CalendarManager calendarManager)
+            CalendarManager calendarManager,
+            ILocalEventBus localEventBus)
         {
             _calendarManager = calendarManager;
             _supervisedComputerRepository = supervisedComputerRepository;
             _activityRecordRepository = activityRecordRepository;
             _snitcherClientFunctions = snitcherClientFunctions;
             _supervisedComputerManager = supervisedComputerManager;
+            _localEventBus = localEventBus;
         }
 
         public virtual async Task<PagedResultDto<SupervisedComputerDto>> GetListAsync(GetSupervisedComputersInput input)
@@ -64,50 +69,7 @@ namespace SnitcherPortal.SupervisedComputers
         [Authorize(SnitcherPortalPermissions.SupervisedComputers.Create)]
         public virtual async Task<SupervisedComputerDto> CreateAsync(SupervisedComputerCreateDto input)
         {
-            var supervisedComputer = await _supervisedComputerManager.CreateAsync(
-            input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil
-            );
-            supervisedComputer.Status = SupervisedComputerStatus.OFFLINE;
-
-            JsonSerializerOptions options = new JsonSerializerOptions
-            {
-                WriteIndented = false
-            };
-
-            var calendarDefaultsWorkingDays = JsonSerializer.Serialize(new CalendarSettingsJson()
-            {
-                Quota = 5,
-                Hours =
-                [
-                    new()
-                    {
-                        Start = new TimeSpan(13, 0, 0),
-                        End = new TimeSpan(20, 0, 0)
-                    }
-                ]
-            }, options);
-
-            var calendarDefaultsWeekend = JsonSerializer.Serialize(new CalendarSettingsJson()
-            {
-                Quota = 8,
-                Hours =
-                [
-                    new()
-                    {
-                        Start = new TimeSpan(10, 0, 0),
-                        End = new TimeSpan(20, 0, 0)
-                    }
-                ]
-            }, options);
-
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Monday, calendarDefaultsWorkingDays);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Tuesday, calendarDefaultsWorkingDays);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Wednesday, calendarDefaultsWorkingDays);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Thursday, calendarDefaultsWorkingDays);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Friday, calendarDefaultsWorkingDays);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Saturday, calendarDefaultsWeekend);
-            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Sunday, calendarDefaultsWeekend);
-
+            var supervisedComputer = await _supervisedComputerManager.CreateAsync(input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil);
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
         }
 
@@ -139,7 +101,7 @@ namespace SnitcherPortal.SupervisedComputers
         public async Task KillProcessAsync(string computerName, string processName)
         {
             var supervisedComputer = (await _supervisedComputerRepository.GetQueryableNoTrackingAsync(false)).First(sc => sc.Name == computerName);
-            await _snitcherClientFunctions.KillProcesses(supervisedComputer.IpAddress!, [processName]);
+            await _localEventBus.PublishAsync(new KillCommandEto() { ConnectionId = supervisedComputer.IpAddress, Processes = [processName] }, false);
 
             var updatedActivity = (await _activityRecordRepository.GetQueryableAsync()).FirstOrDefault(e => e.EndTime == null);
             if (updatedActivity != null)

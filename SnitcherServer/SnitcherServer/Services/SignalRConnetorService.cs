@@ -1,28 +1,19 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
-using Microsoft.Extensions.Logging;
-using SnitcherPortal.Engine;
-using System;
-using System.Net.Http;
-using System.Threading;
-using System.Threading.Tasks;
-using Volo.Abp.DependencyInjection;
+using SnitcherServer.Interface;
 
-namespace SnitcherPortal;
+namespace SnitcherServer.Services;
 
-public class ActivePageService : ITransientDependency, IAsyncDisposable
+public class SignalRConnetorService : IAsyncDisposable
 {
-    private readonly ILogger<ActivePageService> Logger;
-
     private HubConnection? HubConnection;
     private bool IsDisposed;
 
-    public event EventHandler<DashboardDataDto>? OnDashboardChanged;
+    public event EventHandler<CommandDto>? OnCommandReceived;
 
     private bool Initialized = false;
 
-    public ActivePageService(ILogger<ActivePageService> logger)
+    public SignalRConnetorService()
     {
-        this.Logger = logger;
     }
 
     /// <summary>
@@ -30,10 +21,10 @@ public class ActivePageService : ITransientDependency, IAsyncDisposable
     /// </summary>
     /// <param name="baseUri"></param>
     /// <returns></returns>
-    public async Task InitializeAsync(string baseUri, string specificLog)
+    public async Task InitializeAsync(string baseUri)
     {
         this.IsDisposed = false;
-        if (this.OnDashboardChanged == null)
+        if (this.OnCommandReceived == null)
         {
             throw new Exception("Active page service is not initialized properly !! At least one event handler is needed.");
         }
@@ -49,7 +40,7 @@ public class ActivePageService : ITransientDependency, IAsyncDisposable
         }
 
         this.HubConnection = new HubConnectionBuilder()
-            .WithUrl(baseUri?.TrimEnd('/') + "/Active-page-hub",
+            .WithUrl(baseUri?.TrimEnd('/') + "/Snitched-client-hub",
                 options =>
                 {
                     options.WebSocketConfiguration = conf =>
@@ -61,26 +52,29 @@ public class ActivePageService : ITransientDependency, IAsyncDisposable
                         ServerCertificateCustomValidationCallback = (message, cert, chain, errors) => { return true; }
                     };
                     options.AccessTokenProvider = () => Task.FromResult(CancellationToken.None.ToString());
-                })
+                })            
             .Build();
 
         this.HubConnection.Closed += async ex =>
         {
             if (!this.IsDisposed)
             {
-                this.Logger.LogWarning(ex, "[Standard page function: {function}, by user {user}]: {logString}", $"ActivePageService.HubConnection.Closed", specificLog, "Reconnect will follow ..");
+                //this.Logger.LogWarning(ex, LogExtensions.BlazorPagePrefixTemplate, $"ActivePageService.HubConnection.Closed", specificLog, "Reconnect will follow ..");
                 Initialized = false;
-                await this.InitializeAsync(baseUri, specificLog);
+                await this.InitializeAsync(baseUri);
             }
         };
 
-        if (this.OnDashboardChanged != null)
+        // Events registration
+        if (this.OnCommandReceived != null)
         {
-            this.HubConnection.On<DashboardDataDto>("DashboardChanged", eto =>
+            this.HubConnection.On<CommandDto>("CommandIssued", eto =>
             {
-                this.OnDashboardChanged.Invoke(EventArgs.Empty, eto);
+                this.OnCommandReceived.Invoke(EventArgs.Empty, eto);
             });
         }
+
+        this.HubConnection.InvokeAsync
 
         try
         {
@@ -89,13 +83,13 @@ public class ActivePageService : ITransientDependency, IAsyncDisposable
         }
         catch (Exception ex)
         {
-            this.Logger.LogError(ex, "[Standard page function: {function}, by user {user}]: {logString}", $"{this.GetType()}.HubConnection.StartAsync", specificLog, "Retry attempts will follow ..");
+            //this.Logger.LogError(ex, LogExtensions.BlazorPagePrefixTemplate, $"{this.GetType()}.HubConnection.StartAsync", specificLog, "Retry attempts will follow ..");
 
             var tmrOnce = new System.Timers.Timer();
             tmrOnce.Elapsed += async (sender, args) =>
             {
                 tmrOnce.Dispose();
-                await this.InitializeAsync(baseUri, specificLog);
+                await this.InitializeAsync(baseUri);
             };
 
             tmrOnce.Interval = 5000;

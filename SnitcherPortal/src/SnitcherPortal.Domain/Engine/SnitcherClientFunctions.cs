@@ -6,6 +6,7 @@ using System.Net.Http.Json;
 using System.Threading.Tasks;
 using System.Web;
 using Volo.Abp.DependencyInjection;
+using static EtoDefinitions;
 
 namespace SnitcherPortal.Engine;
 
@@ -18,13 +19,13 @@ public class SnitcherClientFunctions : ITransientDependency
         _httpClientFactory = httpClientFactory;
     }
 
-    public async Task<SnitchingDataDto?> GetShitchingData(string uri)
+    public async Task<SnitchingDataEto?> GetShitchingData(string uri)
     {
         var client = _httpClientFactory.CreateClient();
         client.Timeout = TimeSpan.FromMilliseconds(3000);
         client.BaseAddress = new Uri(uri);
         var response = await client.GetAsync("Snitching/status");
-        return await response.Content.ReadFromJsonAsync<SnitchingDataDto>();
+        return await response.Content.ReadFromJsonAsync<SnitchingDataEto>();
     }
 
     public async Task KillProcesses(string uri, List<string> processNames)

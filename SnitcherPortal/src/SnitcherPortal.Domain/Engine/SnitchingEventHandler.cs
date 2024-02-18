@@ -4,90 +4,88 @@ using SnitcherPortal.KnownProcesses;
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.SupervisedComputers;
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
+using Volo.Abp.EventBus;
 using Volo.Abp.EventBus.Local;
 using Volo.Abp.Uow;
+using static EtoDefinitions;
 
 namespace SnitcherPortal.Engine
 {
-    public class SnitchingJob : ISingletonDependency
+    public class SnitchingEventHandler : ILocalEventHandler<SnitchingDataEto>, ILocalEventHandler<ClientDisconnectEto>, ITransientDependency
     {
-        private static int RefreshPeriod = 1000;
-
         protected KnownProcessManager _knownProcessManager;
         protected IUnitOfWorkManager _unitOfWorkManager;
         protected SnitcherClientFunctions _snitcherClientFunctions;
         protected ISupervisedComputerRepository _supervisedComputerRepository;
+        protected SupervisedComputerManager _supervisedComputerManager;
         protected IActivityRecordRepository _activityRecordRepository;
         protected ISnitchingLogRepository _snitchingLogRepository;
-        protected ILogger<SnitchingJob> _logger;
+        protected ILogger<SnitchingEventHandler> _logger;
         protected ILocalEventBus _localEventBus;
 
-        public SnitchingJob(IUnitOfWorkManager unitOfWorkManager,
+        public SnitchingEventHandler(IUnitOfWorkManager unitOfWorkManager,
             KnownProcessManager knownProcessManager,
             SnitcherClientFunctions snitcherClientFunctions,
             ISupervisedComputerRepository supervisedComputerRepository,
+            SupervisedComputerManager supervisedComputerManager,
             IActivityRecordRepository activityRecordRepository,
             ISnitchingLogRepository snitchingLogRepository,
-            ILogger<SnitchingJob> logger,
+            ILogger<SnitchingEventHandler> logger,
             ILocalEventBus localEventBus)
         {
             _unitOfWorkManager = unitOfWorkManager;
             _knownProcessManager = knownProcessManager;
             _snitcherClientFunctions = snitcherClientFunctions;
             _supervisedComputerRepository = supervisedComputerRepository;
+            _supervisedComputerManager = supervisedComputerManager;
             _activityRecordRepository = activityRecordRepository;
             _snitchingLogRepository = snitchingLogRepository;
             _logger = logger;
             _localEventBus = localEventBus;
         }
 
-        public void Start()
-        {
-            Task.Run(SnitchingLoop);
-        }
-
-        private async Task SnitchingLoop()
+        public async Task HandleEventAsync(ClientDisconnectEto eventData)
         {
             try
             {
-                List<SupervisedComputer> scList = [];
+                DashboardDataDto dashboardDataDto;
                 using (var unitOfWork = _unitOfWorkManager.Begin(true))
                 {
-                    scList = (await _supervisedComputerRepository.GetQueryableNoTrackingAsync()).ToList();
-                }
+                    var supervisedComputer = (await _supervisedComputerRepository.WithDetailsAsync())
+                        .FirstOrDefault(sc => sc.IpAddress == eventData!.ConnectionId);
 
-                foreach (var scItem in scList.Where(e => e.IpAddress?.Length > 0))
-                {
-                    await HandleSupervisedComputer(scItem);
+                    if (supervisedComputer == null)
+                    {
+                        return;
+                    }
+
+                    var activityRecords = (await _activityRecordRepository.GetQueryableAsync())
+                        .OrderByDescending(e => e.StartTime).Take(10).ToList();
+                    supervisedComputer.Status = SupervisedComputerStatus.OFFLINE;
+                    await _supervisedComputerRepository.UpdateAsync(supervisedComputer);
+                    await unitOfWork.CompleteAsync();
+
+                    dashboardDataDto = DashboardMapper
+                        .Map(supervisedComputer, activityRecords.OrderByDescending(e => e.StartTime).Take(10).ToList(), null);
                 }
+                
+                await _localEventBus.PublishAsync(dashboardDataDto, false);
             }
             catch (Exception ex)
             {
                 _logger.LogException(ex);
-            }
-            finally
-            {
-                Thread.Sleep(RefreshPeriod);
-                await Task.Run(SnitchingLoop);
             }
         }
 
-        private async Task HandleSupervisedComputer(SupervisedComputer input)
+        public async Task HandleEventAsync(SnitchingDataEto eventData)
         {
-            SnitchingDataDto? data = null;
-            try
+            if (eventData == null || (eventData.MachineIdentifier?.IsNullOrWhiteSpace() ?? true) || (eventData.ConnectionId?.IsNullOrWhiteSpace() ?? true))
             {
-                data = await _snitcherClientFunctions.GetShitchingData(input.IpAddress!);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogException(ex);
+                _logger.LogError("Received data from Client is not vali, will be ignored!");
+                return;
             }
 
             try
@@ -96,24 +94,23 @@ namespace SnitcherPortal.Engine
 
                 using (var unitOfWork = _unitOfWorkManager.Begin(true))
                 {
-                    var supervisedComputer = (await _supervisedComputerRepository.WithDetailsAsync()).Where(sc => sc.Id == input.Id).First();
+                    var supervisedComputer = (await _supervisedComputerRepository.WithDetailsAsync())
+                        .FirstOrDefault(sc => sc.Identifier == eventData.MachineIdentifier);
 
-                    // Handle offline state
-                    if (data == null)
+                    if (supervisedComputer == null)
                     {
-                        supervisedComputer.Status = SupervisedComputerStatus.OFFLINE;
-                        await unitOfWork.CompleteAsync();
-                        return;
+                        supervisedComputer = await _supervisedComputerManager
+                            .CreateAsync("Autoregistered", eventData.MachineIdentifier!, true, "", null);
                     }
 
                     // Handle computer properties
                     supervisedComputer.Status = SupervisedComputerStatus.ONLINE;
-                    supervisedComputer.Identifier = data.MachineIdentifier ?? supervisedComputer.Identifier;
+                    supervisedComputer.IpAddress = eventData.ConnectionId; // TODO Rename this
 
                     // Handle snitching log
-                    if (data.Logs?.Count > 0)
+                    if (eventData.Logs?.Count > 0)
                     {
-                        data.Logs.ForEach(e =>
+                        eventData.Logs.ForEach(e =>
                         {
                             supervisedComputer.SnitchingLogs.Add(new SnitchingLog(Guid.NewGuid(), supervisedComputer.Id, DateTime.Now, e));
                         });
@@ -122,9 +119,9 @@ namespace SnitcherPortal.Engine
                     await _snitchingLogRepository.DeleteManyAsync(logsToRemove);
 
                     // Handle processes
-                    if (data.Processes?.Count > 0)
+                    if (eventData.Processes?.Count > 0)
                     {
-                        var newlyDetectedProcesses = data.Processes.Except(supervisedComputer.KnownProcesses.Select(kp => kp.Name)).ToList();
+                        var newlyDetectedProcesses = eventData.Processes.Except(supervisedComputer.KnownProcesses.Select(kp => kp.Name)).ToList();
                         newlyDetectedProcesses.ForEach(p =>
                         {
                             supervisedComputer.KnownProcesses.Add(new KnownProcess(Guid.NewGuid(), supervisedComputer.Id, p, false, false));
@@ -159,17 +156,15 @@ namespace SnitcherPortal.Engine
                         activityRecords.Add(activityRecord);
                         await _activityRecordRepository.InsertAsync(activityRecord);
                     }
-
                     dashboardDataDto = DashboardMapper
-                        .Map(supervisedComputer, activityRecords.OrderByDescending(e => e.StartTime).Take(10).ToList(), data.Processes);
+                        .Map(supervisedComputer, activityRecords.OrderByDescending(e => e.StartTime).Take(10).ToList(), eventData.Processes);
 
                     // Commit changes
-                    await _supervisedComputerRepository.UpdateAsync(supervisedComputer);                    
+                    await _supervisedComputerRepository.UpdateAsync(supervisedComputer);
                     await unitOfWork.CompleteAsync();
                 }
-
-                // TODO: Handle killing
-                await _localEventBus.PublishAsync(dashboardDataDto);
+                
+                await _localEventBus.PublishAsync(dashboardDataDto, false);
             }
             catch (Exception ex)
             {
@@ -194,5 +189,6 @@ namespace SnitcherPortal.Engine
                 _logger.LogException(ex);
             }
         }
+        
     }
 }

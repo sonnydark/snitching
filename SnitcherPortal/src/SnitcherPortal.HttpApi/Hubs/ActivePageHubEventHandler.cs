@@ -7,14 +7,14 @@ using Volo.Abp.EventBus;
 
 namespace SnitcherPortal.Hubs;
 
-public class SnitchingHubEventHandler : ILocalEventHandler<DashboardDataDto>, ITransientDependency
+public class ActivePageHubEventHandler : ILocalEventHandler<DashboardDataDto>, ITransientDependency
 {
-    private readonly ILogger<SnitchingHubEventHandler> _logger;
-    private readonly IHubContext<SnitchingHub, ITransportRequestHubClient> _hubContext;
+    private readonly ILogger<ActivePageHubEventHandler> _logger;
+    private readonly IHubContext<ActivePageHub, IActivePageHubClient> _hubContext;
 
-    public SnitchingHubEventHandler(
-        ILogger<SnitchingHubEventHandler> logger,
-        IHubContext<SnitchingHub, ITransportRequestHubClient> hubContext)
+    public ActivePageHubEventHandler(
+        ILogger<ActivePageHubEventHandler> logger,
+        IHubContext<ActivePageHub, IActivePageHubClient> hubContext)
     {
         _logger = logger;
         _hubContext = hubContext;

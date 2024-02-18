@@ -7,3 +7,9 @@ public class SnitchingDataDto
 
     public List<string>? Processes { get; set; }
 }
+
+
+public class CommandDto
+{
+    public string Test { get; set; }
+}

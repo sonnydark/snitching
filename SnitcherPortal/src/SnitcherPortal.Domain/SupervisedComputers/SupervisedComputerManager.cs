@@ -1,22 +1,24 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using JetBrains.Annotations;
 using Volo.Abp;
-using Volo.Abp.Domain.Repositories;
 using Volo.Abp.Domain.Services;
 using Volo.Abp.Data;
+using System.Text.Json;
+using SnitcherPortal.Calendars;
 
 namespace SnitcherPortal.SupervisedComputers
 {
     public class SupervisedComputerManager : DomainService
     {
         protected ISupervisedComputerRepository _supervisedComputerRepository;
+        protected CalendarManager _calendarManager;
 
-        public SupervisedComputerManager(ISupervisedComputerRepository supervisedComputerRepository)
+        public SupervisedComputerManager(ISupervisedComputerRepository supervisedComputerRepository,
+            CalendarManager calendarManager)
         {
             _supervisedComputerRepository = supervisedComputerRepository;
+            _calendarManager = calendarManager;
         }
 
         public virtual async Task<SupervisedComputer> CreateAsync(
@@ -28,10 +30,45 @@ namespace SnitcherPortal.SupervisedComputers
             Check.Length(identifier, nameof(identifier), SupervisedComputerConsts.IdentifierMaxLength, SupervisedComputerConsts.IdentifierMinLength);
             Check.Length(ipAddress, nameof(ipAddress), SupervisedComputerConsts.IpAddressMaxLength);
 
-            var supervisedComputer = new SupervisedComputer(
-             GuidGenerator.Create(),
-             name, identifier, isCalendarActive, ipAddress, banUntil
-             );
+            var supervisedComputer = new SupervisedComputer(GuidGenerator.Create(), name, identifier, isCalendarActive, ipAddress, banUntil)
+            {
+                Status = SupervisedComputerStatus.OFFLINE
+            };
+
+            JsonSerializerOptions options = new() { WriteIndented = false };
+            var calendarDefaultsWorkingDays = JsonSerializer.Serialize(new CalendarSettingsJson()
+            {
+                Quota = 5,
+                Hours =
+                [
+                    new()
+                    {
+                        Start = new TimeSpan(13, 0, 0),
+                        End = new TimeSpan(20, 0, 0)
+                    }
+                ]
+            }, options);
+
+            var calendarDefaultsWeekend = JsonSerializer.Serialize(new CalendarSettingsJson()
+            {
+                Quota = 8,
+                Hours =
+                [
+                    new()
+                    {
+                        Start = new TimeSpan(10, 0, 0),
+                        End = new TimeSpan(20, 0, 0)
+                    }
+                ]
+            }, options);
+
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Monday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Tuesday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Wednesday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Thursday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Friday, calendarDefaultsWorkingDays);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Saturday, calendarDefaultsWeekend);
+            await _calendarManager.CreateAsync(supervisedComputer.Id, (int)DayOfWeek.Sunday, calendarDefaultsWeekend);
 
             return await _supervisedComputerRepository.InsertAsync(supervisedComputer);
         }

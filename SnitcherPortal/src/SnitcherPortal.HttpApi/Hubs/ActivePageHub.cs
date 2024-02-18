@@ -3,13 +3,13 @@ using Volo.Abp.AspNetCore.SignalR;
 
 namespace SnitcherPortal.Hubs;
 
-[HubRoute("/Kanban-hub")]
+[HubRoute("/Active-page-hub")]
 
-public class SnitchingHub : AbpHub<ITransportRequestHubClient>
+public class ActivePageHub : AbpHub<IActivePageHubClient>
 {
 }
 
-public interface ITransportRequestHubClient
+public interface IActivePageHubClient
 {
     Task DashboardChanged(DashboardDataDto eto);
 }

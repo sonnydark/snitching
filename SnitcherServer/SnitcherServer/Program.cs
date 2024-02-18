@@ -15,4 +15,5 @@ app.UseAuthorization();
 
 app.MapControllers();
 
+await SnitcherServer.Services.AppDomain.Instance.CreateSignalRConnection();
 app.Run();

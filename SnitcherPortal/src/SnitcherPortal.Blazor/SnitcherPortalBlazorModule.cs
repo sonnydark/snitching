@@ -404,12 +404,6 @@ public class SnitcherPortalBlazorModule : AbpModule
 
     public async override Task OnPostApplicationInitializationAsync(ApplicationInitializationContext context)
     {
-        var snitchingJob = context.ServiceProvider.GetRequiredService<SnitchingJob>();
         LimitedResultRequestDto.MaxMaxResultCount = int.MaxValue;
-        try
-        {
-            snitchingJob.Start();
-        }
-        catch { }
     }
 }
