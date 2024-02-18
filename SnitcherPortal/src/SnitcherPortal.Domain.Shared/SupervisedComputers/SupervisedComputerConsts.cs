@@ -13,6 +13,6 @@ namespace SnitcherPortal.SupervisedComputers
         public const int NameMaxLength = 64;
         public const int IdentifierMinLength = 1;
         public const int IdentifierMaxLength = 256;
-        public const int IpAddressMaxLength = 64;
+        public const int ConnectionIdMaxLength = 64;
     }
 }

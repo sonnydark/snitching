@@ -55,7 +55,7 @@ namespace SnitcherPortal.Engine
                 using (var unitOfWork = _unitOfWorkManager.Begin(true))
                 {
                     var supervisedComputer = (await _supervisedComputerRepository.WithDetailsAsync())
-                        .FirstOrDefault(sc => sc.IpAddress == eventData!.ConnectionId);
+                        .FirstOrDefault(sc => sc.ConnectionId == eventData!.ConnectionId);
 
                     if (supervisedComputer == null)
                     {
@@ -105,7 +105,7 @@ namespace SnitcherPortal.Engine
 
                     // Handle computer properties
                     supervisedComputer.Status = SupervisedComputerStatus.ONLINE;
-                    supervisedComputer.IpAddress = eventData.ConnectionId; // TODO Rename this
+                    supervisedComputer.ConnectionId = eventData.ConnectionId; // TODO Rename this
 
                     // Handle snitching log
                     if (eventData.Logs?.Count > 0)

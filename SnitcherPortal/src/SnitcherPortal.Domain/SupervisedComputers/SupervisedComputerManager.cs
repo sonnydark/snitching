@@ -22,15 +22,15 @@ namespace SnitcherPortal.SupervisedComputers
         }
 
         public virtual async Task<SupervisedComputer> CreateAsync(
-        string name, string identifier, bool isCalendarActive, string? ipAddress = null, DateTime? banUntil = null)
+        string name, string identifier, bool isCalendarActive, string? connectionId = null, DateTime? banUntil = null)
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
             Check.Length(name, nameof(name), SupervisedComputerConsts.NameMaxLength, SupervisedComputerConsts.NameMinLength);
             Check.NotNullOrWhiteSpace(identifier, nameof(identifier));
             Check.Length(identifier, nameof(identifier), SupervisedComputerConsts.IdentifierMaxLength, SupervisedComputerConsts.IdentifierMinLength);
-            Check.Length(ipAddress, nameof(ipAddress), SupervisedComputerConsts.IpAddressMaxLength);
+            Check.Length(connectionId, nameof(connectionId), SupervisedComputerConsts.ConnectionIdMaxLength);
 
-            var supervisedComputer = new SupervisedComputer(GuidGenerator.Create(), name, identifier, isCalendarActive, ipAddress, banUntil)
+            var supervisedComputer = new SupervisedComputer(GuidGenerator.Create(), name, identifier, isCalendarActive, connectionId, banUntil)
             {
                 Status = SupervisedComputerStatus.OFFLINE
             };
@@ -75,21 +75,21 @@ namespace SnitcherPortal.SupervisedComputers
 
         public virtual async Task<SupervisedComputer> UpdateAsync(
             Guid id,
-            string name, string identifier, bool isCalendarActive, SupervisedComputerStatus status, string? ipAddress = null, DateTime? banUntil = null, [CanBeNull] string? concurrencyStamp = null
+            string name, string identifier, bool isCalendarActive, SupervisedComputerStatus status, string? connectionId = null, DateTime? banUntil = null, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
             Check.Length(name, nameof(name), SupervisedComputerConsts.NameMaxLength, SupervisedComputerConsts.NameMinLength);
             Check.NotNullOrWhiteSpace(identifier, nameof(identifier));
             Check.Length(identifier, nameof(identifier), SupervisedComputerConsts.IdentifierMaxLength, SupervisedComputerConsts.IdentifierMinLength);
-            Check.Length(ipAddress, nameof(ipAddress), SupervisedComputerConsts.IpAddressMaxLength);
+            Check.Length(connectionId, nameof(connectionId), SupervisedComputerConsts.ConnectionIdMaxLength);
 
             var supervisedComputer = await _supervisedComputerRepository.GetAsync(id);
 
             supervisedComputer.Name = name;
             supervisedComputer.Identifier = identifier;
             supervisedComputer.IsCalendarActive = isCalendarActive;
-            supervisedComputer.IpAddress = ipAddress;
+            supervisedComputer.ConnectionId = connectionId;
             supervisedComputer.Status = status;
             supervisedComputer.BanUntil = banUntil;
 

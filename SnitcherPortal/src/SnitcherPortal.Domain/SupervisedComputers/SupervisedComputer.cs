@@ -22,7 +22,7 @@ namespace SnitcherPortal.SupervisedComputers
         public virtual string Identifier { get; set; }
 
         [CanBeNull]
-        public virtual string? IpAddress { get; set; }
+        public virtual string? ConnectionId { get; set; }
 
         public virtual SupervisedComputerStatus Status { get; set; }
 
@@ -48,11 +48,11 @@ namespace SnitcherPortal.SupervisedComputers
             Check.Length(name, nameof(name), SupervisedComputerConsts.NameMaxLength, SupervisedComputerConsts.NameMinLength);
             Check.NotNull(identifier, nameof(identifier));
             Check.Length(identifier, nameof(identifier), SupervisedComputerConsts.IdentifierMaxLength, SupervisedComputerConsts.IdentifierMinLength);
-            Check.Length(ipAddress, nameof(ipAddress), SupervisedComputerConsts.IpAddressMaxLength, 0);
+            Check.Length(ipAddress, nameof(ipAddress), SupervisedComputerConsts.ConnectionIdMaxLength, 0);
             Name = name;
             Identifier = identifier;
             IsCalendarActive = isCalendarActive;
-            IpAddress = ipAddress;
+            ConnectionId = ipAddress;
             BanUntil = banUntil;
             SnitchingLogs = new Collection<SnitchingLog>();
             ActivityRecords = new Collection<ActivityRecord>();

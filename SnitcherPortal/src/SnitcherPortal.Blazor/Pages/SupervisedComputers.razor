@@ -95,8 +95,8 @@
                 </DataGridColumn>
 
                 <DataGridColumn TItem="SupervisedComputerDto"
-                                Field="IpAddress"
-                                Caption="@L["IpAddress"]">
+                                Field="ConnectionId"
+                                Caption="@L["ConnectionId"]">
                 </DataGridColumn>
 
                 <DataGridColumn TItem="SupervisedComputerDto"
@@ -412,8 +412,8 @@
 
                     <Validation>
                         <Field>
-                            <FieldLabel>@L["IpAddress"]</FieldLabel>
-                                <TextEdit @bind-Text="@NewSupervisedComputer.IpAddress" MaxLength="SupervisedComputerConsts.IpAddressMaxLength">
+                            <FieldLabel>@L["ConnectionId"]</FieldLabel>
+                                <TextEdit @bind-Text="@NewSupervisedComputer.ConnectionId" MaxLength="SupervisedComputerConsts.ConnectionIdMaxLength">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>
@@ -497,8 +497,8 @@
 
                     <Validation>
                         <Field>
-                            <FieldLabel>@L["IpAddress"]</FieldLabel>
-                                <TextEdit @bind-Text="@EditingSupervisedComputer.IpAddress" MaxLength="SupervisedComputerConsts.IpAddressMaxLength">
+                            <FieldLabel>@L["ConnectionId"]</FieldLabel>
+                                <TextEdit @bind-Text="@EditingSupervisedComputer.ConnectionId" MaxLength="SupervisedComputerConsts.ConnectionIdMaxLength" ReadOnly="true">
                                     <Feedback>
                                         <ValidationError />
                                     </Feedback>

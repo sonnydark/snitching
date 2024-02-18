@@ -184,7 +184,7 @@ public class SnitcherPortalDbContext :
                 b.ConfigureByConvention();
                 b.Property(x => x.Name).HasColumnName(nameof(SupervisedComputer.Name)).IsRequired().HasMaxLength(SupervisedComputerConsts.NameMaxLength);
                 b.Property(x => x.Identifier).HasColumnName(nameof(SupervisedComputer.Identifier)).IsRequired().HasMaxLength(SupervisedComputerConsts.IdentifierMaxLength);
-                b.Property(x => x.IpAddress).HasColumnName(nameof(SupervisedComputer.IpAddress)).HasMaxLength(SupervisedComputerConsts.IpAddressMaxLength);
+                b.Property(x => x.ConnectionId).HasColumnName(nameof(SupervisedComputer.ConnectionId)).HasMaxLength(SupervisedComputerConsts.ConnectionIdMaxLength);
                 b.Property(x => x.IsCalendarActive).HasColumnName(nameof(SupervisedComputer.IsCalendarActive));
                 b.Property(x => x.BanUntil).HasColumnName(nameof(SupervisedComputer.BanUntil));
                 b.HasMany(x => x.SnitchingLogs).WithOne().HasForeignKey(x => x.SupervisedComputerId).IsRequired().OnDelete(DeleteBehavior.NoAction);

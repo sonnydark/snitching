@@ -31,11 +31,7 @@ public class EtoDefinitions
     public class ShowMessageEto
     {
         public string? ConnectionId { get; set; }
+        public int Duration { get; set; }
         public string? Message { get; set; }
-    }
-
-    public class HideMessageEto
-    {
-        public string? ConnectionId { get; set; }
     }
 }

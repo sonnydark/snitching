@@ -27,7 +27,7 @@ namespace SnitcherAgent
             }
             CheckPortalUrl();
 
-            await AppDomain.Instance.CreateSignalRConnection();
+            await AppDomain.Instance.CreateSignalRConnection(this.Dispatcher);
         }
 
         protected override void OnExit(ExitEventArgs e)

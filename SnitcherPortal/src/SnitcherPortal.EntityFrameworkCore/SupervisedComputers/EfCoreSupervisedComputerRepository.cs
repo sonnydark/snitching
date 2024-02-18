@@ -62,10 +62,10 @@ namespace SnitcherPortal.SupervisedComputers
             DateTime? banUntilMax = null)
         {
             return query
-                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Name!.Contains(filterText!) || e.Identifier!.Contains(filterText!) || e.IpAddress!.Contains(filterText!))
+                    .WhereIf(!string.IsNullOrWhiteSpace(filterText), e => e.Name!.Contains(filterText!) || e.Identifier!.Contains(filterText!) || e.ConnectionId!.Contains(filterText!))
                     .WhereIf(!string.IsNullOrWhiteSpace(name), e => e.Name.Contains(name))
                     .WhereIf(!string.IsNullOrWhiteSpace(identifier), e => e.Identifier.Contains(identifier))
-                    .WhereIf(!string.IsNullOrWhiteSpace(ipAddress), e => e.IpAddress.Contains(ipAddress))
+                    .WhereIf(!string.IsNullOrWhiteSpace(ipAddress), e => e.ConnectionId.Contains(ipAddress))
                     .WhereIf(isCalendarActive.HasValue, e => e.IsCalendarActive == isCalendarActive)
                     .WhereIf(banUntilMin.HasValue, e => e.BanUntil >= banUntilMin!.Value)
                     .WhereIf(banUntilMax.HasValue, e => e.BanUntil <= banUntilMax!.Value);

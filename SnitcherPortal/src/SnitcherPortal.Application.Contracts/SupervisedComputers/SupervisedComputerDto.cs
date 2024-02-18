@@ -13,7 +13,7 @@ namespace SnitcherPortal.SupervisedComputers
     {
         public string Name { get; set; } = null!;
         public string Identifier { get; set; } = null!;
-        public string? IpAddress { get; set; }
+        public string? ConnectionId { get; set; }
         public SupervisedComputerStatus Status { get; set; }
         public bool IsCalendarActive { get; set; }
         public DateTime? BanUntil { get; set; }

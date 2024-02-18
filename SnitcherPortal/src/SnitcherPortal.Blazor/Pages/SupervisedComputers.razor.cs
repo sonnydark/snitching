@@ -341,9 +341,9 @@ namespace SnitcherPortal.Blazor.Pages
             Filter.Identifier = identifier;
             await SearchAsync();
         }
-        protected virtual async Task OnIpAddressChangedAsync(string? ipAddress)
+        protected virtual async Task OnConnectionIdChangedAsync(string? connectionId)
         {
-            Filter.IpAddress = ipAddress;
+            Filter.ConnectionId = connectionId;
             await SearchAsync();
         }
         protected virtual async Task OnIsCalendarActiveChangedAsync(bool? isCalendarActive)

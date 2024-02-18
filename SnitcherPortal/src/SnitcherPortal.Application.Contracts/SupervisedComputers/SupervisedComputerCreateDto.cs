@@ -12,8 +12,8 @@ namespace SnitcherPortal.SupervisedComputers
         [Required]
         [StringLength(SupervisedComputerConsts.IdentifierMaxLength, MinimumLength = SupervisedComputerConsts.IdentifierMinLength)]
         public string Identifier { get; set; } = null!;
-        [StringLength(SupervisedComputerConsts.IpAddressMaxLength)]
-        public string? IpAddress { get; set; }
+        [StringLength(SupervisedComputerConsts.ConnectionIdMaxLength)]
+        public string? ConnectionId { get; set; }
         public bool IsCalendarActive { get; set; }
         public DateTime? BanUntil { get; set; }
     }

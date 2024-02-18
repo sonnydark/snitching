@@ -12,7 +12,6 @@ public class SignalRConnetorService : IAsyncDisposable
     public event EventHandler<SetConfigurationEto>? OnSetConfiguration;
     public event EventHandler<KillCommandEto>? OnKillCommandReceived;
     public event EventHandler<ShowMessageEto>? OnShowMessageReceived;
-    public event EventHandler<HideMessageEto>? OnHideMessageReceived;
 
     private bool Initialized = false;
 
@@ -89,14 +88,6 @@ public class SignalRConnetorService : IAsyncDisposable
             });
         }
 
-        if (this.OnHideMessageReceived != null)
-        {
-            this.HubConnection.On<HideMessageEto>("HideMessageReceived", eto =>
-            {
-                this.OnHideMessageReceived.Invoke(EventArgs.Empty, eto);
-            });
-        }
-
         try
         {
             await this.HubConnection.StartAsync();
@@ -104,7 +95,7 @@ public class SignalRConnetorService : IAsyncDisposable
         }
         catch (Exception ex)
         {
-            AppDomain.Instance.Logs.Add($"Exception occured: {ex.ToString()}, Reconnect will follow ..");
+            AppDomain.Instance.Logs.Add($"Exception occured: {ex}, Reconnect will follow ..");
 
             var tmrOnce = new System.Timers.Timer();
             tmrOnce.Elapsed += async (sender, args) =>

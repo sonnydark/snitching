@@ -45,8 +45,8 @@ namespace SnitcherPortal.SupervisedComputers
 
         public virtual async Task<PagedResultDto<SupervisedComputerDto>> GetListAsync(GetSupervisedComputersInput input)
         {
-            var totalCount = await _supervisedComputerRepository.GetCountAsync(input.FilterText, input.Name, input.Identifier, input.IpAddress, input.IsCalendarActive, input.BanUntilMin, input.BanUntilMax);
-            var items = await _supervisedComputerRepository.GetListAsync(input.FilterText, input.Name, input.Identifier, input.IpAddress, input.IsCalendarActive, input.BanUntilMin, input.BanUntilMax, input.Sorting, input.MaxResultCount, input.SkipCount);
+            var totalCount = await _supervisedComputerRepository.GetCountAsync(input.FilterText, input.Name, input.Identifier, input.ConnectionId, input.IsCalendarActive, input.BanUntilMin, input.BanUntilMax);
+            var items = await _supervisedComputerRepository.GetListAsync(input.FilterText, input.Name, input.Identifier, input.ConnectionId, input.IsCalendarActive, input.BanUntilMin, input.BanUntilMax, input.Sorting, input.MaxResultCount, input.SkipCount);
 
             return new PagedResultDto<SupervisedComputerDto>
             {
@@ -69,7 +69,7 @@ namespace SnitcherPortal.SupervisedComputers
         [Authorize(SnitcherPortalPermissions.SupervisedComputers.Create)]
         public virtual async Task<SupervisedComputerDto> CreateAsync(SupervisedComputerCreateDto input)
         {
-            var supervisedComputer = await _supervisedComputerManager.CreateAsync(input.Name, input.Identifier, input.IsCalendarActive, input.IpAddress, input.BanUntil);
+            var supervisedComputer = await _supervisedComputerManager.CreateAsync(input.Name, input.Identifier, input.IsCalendarActive, input.ConnectionId, input.BanUntil);
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
         }
 
@@ -78,7 +78,7 @@ namespace SnitcherPortal.SupervisedComputers
         {
             var supervisedComputer = await _supervisedComputerManager.UpdateAsync(
             id,
-            input.Name, input.Identifier, input.IsCalendarActive, input.Status, input.IpAddress, input.BanUntil, input.ConcurrencyStamp
+            input.Name, input.Identifier, input.IsCalendarActive, input.Status, input.ConnectionId, input.BanUntil, input.ConcurrencyStamp
             );
 
             return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
@@ -101,7 +101,11 @@ namespace SnitcherPortal.SupervisedComputers
         public async Task KillProcessAsync(string computerName, string processName)
         {
             var supervisedComputer = (await _supervisedComputerRepository.GetQueryableNoTrackingAsync(false)).First(sc => sc.Name == computerName);
-            await _localEventBus.PublishAsync(new KillCommandEto() { ConnectionId = supervisedComputer.IpAddress, Processes = [processName] }, false);
+
+            await _localEventBus.PublishAsync(new ShowMessageEto() { ConnectionId = supervisedComputer.ConnectionId, Duration = 20, Message = "Hahas wef werf ewrf erf er fr" }, false);
+
+
+            await _localEventBus.PublishAsync(new KillCommandEto() { ConnectionId = supervisedComputer.ConnectionId, Processes = [processName] }, false);
 
             var updatedActivity = (await _activityRecordRepository.GetQueryableAsync()).FirstOrDefault(e => e.EndTime == null);
             if (updatedActivity != null)

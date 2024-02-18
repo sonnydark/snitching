@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Timers;
 
 namespace SnitcherPortal.Blazor.Pages;
 
@@ -43,16 +44,32 @@ public partial class Dashboard
 
     private async void DashboardChanged(object? sender, DashboardDataDto eventDto)
     {
-        await InvokeAsync(async () =>
+        await InvokeAsync(() =>
         {
-            if (this.IsDisposed == true || eventDto?.ComputerName != this.SelectedComputer)
+            if (this.IsDisposed == true || eventDto == null || eventDto?.ComputerName != this.SelectedComputer)
             {
                 return;
             }
 
-            this.Model = eventDto;
+            this.Model = eventDto!;
             StateHasChanged();
         });
+    }
+
+    protected override void OnAfterRender(bool firstRender)
+    {
+        if (firstRender)
+        {
+            Timer timer = new(1000);
+            timer.Elapsed += new ElapsedEventHandler((object? sender, ElapsedEventArgs e) =>
+            {
+                if (this.Model?.LastUpdate.HasValue == true)
+                {
+                    InvokeAsync(() => { this.Model.LastUpdate.Value.AddSeconds(1); this.StateHasChanged(); });
+                }
+            });
+            timer.Enabled = true;
+        }
     }
 
     public async Task ProcessButtonClickedAsync(string processName)

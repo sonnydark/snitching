@@ -66,26 +66,7 @@ public class SnitchedClientHub : AbpHub<ISnitchedClientHubClient>
 
 public interface ISnitchedClientHubClient
 {
-    // Theese are messages send from server to the client
     Task SetConfiguration(SetConfigurationEto eto);
     Task KillCommandReceived(KillCommandEto eto);
     Task ShowMessageReceived(ShowMessageEto eto);
-    Task HideMessageReceived(HideMessageEto eto);
 }
-
-//public List<string> GetConnectedClients()
-//{
-//    //this.Context.ConnectionId
-
-//    // Get the list of connected clients using the Context.ConnectionId property
-//    var connectedClients = new List<string>();
-
-//    foreach (var connection in this.Context.)
-//    {
-//        connectedClients.Add(connection.ConnectionId);
-//    }
-
-//    return connectedClients;
-
-//https://www.c-sharpcorner.com/blogs/how-to-get-connected-client-list-in-signalr
-//}
