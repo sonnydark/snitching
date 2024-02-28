@@ -6,21 +6,23 @@
         xmlns:local="clr-namespace:SnitcherAgent"
         mc:Ignorable="d"
         Style="{StaticResource WarningWindowStyle}"
-        Title="Citaj pozorne" Height="auto" Width="auto" SizeToContent="WidthAndHeight">
+        WindowStartupLocation="CenterScreen"
+        Height="auto" Width="auto" SizeToContent="WidthAndHeight">
 
     <Grid>
         <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="40"></ColumnDefinition>
             <ColumnDefinition Width="*"></ColumnDefinition>
-            <ColumnDefinition Width="10"></ColumnDefinition>
+            <ColumnDefinition Width="40"></ColumnDefinition>
         </Grid.ColumnDefinitions>
         <Grid.RowDefinitions>
-            <RowDefinition Height="10"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
             <RowDefinition Height="*"></RowDefinition>
-            <RowDefinition Height="10"></RowDefinition>
+            <RowDefinition Height="40"></RowDefinition>
         </Grid.RowDefinitions>
 
-        <TextBox x:Name="MessageTextBox" Grid.Column="1" Grid.Row="1" FontSize="20" Width="500" Height="300" TextAlignment="Center" VerticalContentAlignment="Center"></TextBox>
+        <TextBox x:Name="MessageTextBox" Grid.Column="1" Grid.Row="1" FontSize="20" TextAlignment="Center"
+                 VerticalContentAlignment="Center" MaxWidth="600" TextWrapping="Wrap"></TextBox>
         
     </Grid>
 </Window>

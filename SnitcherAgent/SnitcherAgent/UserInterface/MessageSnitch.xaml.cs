@@ -1,6 +1,5 @@
 ﻿using System.Timers;
 using System.Windows;
-using System.Windows.Media.Animation;
 using static SnitcherAgent.SignalREto.EtoDefinitions;
 
 namespace SnitcherAgent

@@ -84,7 +84,7 @@ namespace SnitcherPortal.Engine
         {
             if (eventData == null || (eventData.MachineIdentifier?.IsNullOrWhiteSpace() ?? true) || (eventData.ConnectionId?.IsNullOrWhiteSpace() ?? true))
             {
-                _logger.LogError("Received data from Client is not vali, will be ignored!");
+                _logger.LogError("Received data from Client is not valid, will be ignored!");
                 return;
             }
 
@@ -105,7 +105,7 @@ namespace SnitcherPortal.Engine
 
                     // Handle computer properties
                     supervisedComputer.Status = SupervisedComputerStatus.ONLINE;
-                    supervisedComputer.ConnectionId = eventData.ConnectionId; // TODO Rename this
+                    supervisedComputer.ConnectionId = eventData.ConnectionId;
 
                     // Handle snitching log
                     if (eventData.Logs?.Count > 0)
@@ -176,6 +176,13 @@ namespace SnitcherPortal.Engine
         {
             //sem rovno param kvoli load times, ale save uz nie
             // spravit toto po zobrazeni, mozno s delay XY s vlastnym await _localEventBus.PublishAsync(dashboardDataDto) .. potom to bude vyzerat ze preblikava?
+
+            //await _localEventBus.PublishAsync(new ShowMessageEto()
+            //{
+            //    ConnectionId = supervisedComputer.ConnectionId,
+            //    Duration = 1,
+            //    Message = "Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava."
+            //}, false);
         }
 
         public async Task TriggerDashboardChangedAsync(DashboardDataDto data)

@@ -45,7 +45,7 @@ namespace SnitcherAgent
             if (!(portalUrl?.Length > 0))
             {
                 var startupPrompt = new StartupPrompt();
-                startupPrompt.Show();
+                startupPrompt.ShowDialog();
             }
         }
     }
