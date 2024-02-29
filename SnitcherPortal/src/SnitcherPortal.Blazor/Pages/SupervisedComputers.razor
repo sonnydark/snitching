@@ -421,7 +421,6 @@
                             </Field>
                         </Validation>
 
-
                         <Field>
                             <Check TValue="bool" @bind-Checked="@NewSupervisedComputer.IsCalendarActive">@L["IsCalendarActive"]</Check>
                         </Field>
@@ -437,8 +436,20 @@
                             </Field>
                         </Validation>
 
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["ClientHeartbeat"]</FieldLabel>
+                                <NumericEdit TValue="int" @bind-Value="@NewSupervisedComputer.ClientHeartbeat">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </NumericEdit>
+                            </Field>
+                        </Validation>
 
-
+                        <Field>
+                            <Check TValue="bool" @bind-Checked="@NewSupervisedComputer.EnableAutokillReasoning">@L["EnableAutokillReasoning"]</Check>
+                        </Field>
 
                     </Validations>
                 </ModalBody>
@@ -522,8 +533,20 @@
                             </Field>
                         </Validation>
 
+                        <Validation>
+                            <Field>
+                                <FieldLabel>@L["ClientHeartbeat"]</FieldLabel>
+                                <NumericEdit TValue="int" @bind-Value="@EditingSupervisedComputer.ClientHeartbeat">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </NumericEdit>
+                            </Field>
+                        </Validation>
 
-
+                        <Field>
+                            <Check TValue="bool" @bind-Checked="@EditingSupervisedComputer.EnableAutokillReasoning">@L["EnableAutokillReasoning"]</Check>
+                        </Field>
 
                     </Validations>
                 </ModalBody>

@@ -17,6 +17,8 @@ namespace SnitcherPortal.SupervisedComputers
         public SupervisedComputerStatus Status { get; set; }
         public bool IsCalendarActive { get; set; }
         public DateTime? BanUntil { get; set; }
+        public int ClientHeartbeat { get; set; }
+        public bool EnableAutokillReasoning { get; set; }
 
         public string ConcurrencyStamp { get; set; } = null!;
 

@@ -58,6 +58,14 @@ public class SupervisedComputersAppService : ApplicationService, ISupervisedComp
         return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(await _supervisedComputerRepository.GetAsync(id));
     }
 
+    [AllowAnonymous]
+    public virtual async Task<SupervisedComputerDto> GetAsync(string connectionId)
+    {
+        var data = (await _supervisedComputerRepository.GetQueryableNoTrackingAsync())
+            .Where(e => e.ConnectionId == connectionId).FirstOrDefault();
+        return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(data!);
+    }
+
     [Authorize(SnitcherPortalPermissions.SupervisedComputers.Delete)]
     public virtual async Task DeleteAsync(Guid id)
     {
@@ -67,17 +75,17 @@ public class SupervisedComputersAppService : ApplicationService, ISupervisedComp
     [Authorize(SnitcherPortalPermissions.SupervisedComputers.Create)]
     public virtual async Task<SupervisedComputerDto> CreateAsync(SupervisedComputerCreateDto input)
     {
-        var supervisedComputer = await _supervisedComputerManager.CreateAsync(input.Name, input.Identifier, input.IsCalendarActive, input.ConnectionId, input.BanUntil);
+        var supervisedComputer = await _supervisedComputerManager.CreateAsync(input.Name, input.Identifier, input.IsCalendarActive,
+            input.ClientHeartbeat, input.EnableAutokillReasoning, input.ConnectionId, input.BanUntil);
         return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
     }
 
     [Authorize(SnitcherPortalPermissions.SupervisedComputers.Edit)]
     public virtual async Task<SupervisedComputerDto> UpdateAsync(Guid id, SupervisedComputerUpdateDto input)
     {
-        var supervisedComputer = await _supervisedComputerManager.UpdateAsync(
-        id,
-        input.Name, input.Identifier, input.IsCalendarActive, input.Status, input.ConnectionId, input.BanUntil, input.ConcurrencyStamp
-        );
+        var supervisedComputer = await _supervisedComputerManager.UpdateAsync(id,
+        input.Name, input.Identifier, input.IsCalendarActive, input.Status, input.ClientHeartbeat, input.EnableAutokillReasoning,
+        input.ConnectionId, input.BanUntil, input.ConcurrencyStamp);
 
         return ObjectMapper.Map<SupervisedComputer, SupervisedComputerDto>(supervisedComputer);
     }
@@ -105,9 +113,20 @@ public class SupervisedComputersAppService : ApplicationService, ISupervisedComp
         var updatedActivity = (await _activityRecordRepository.GetQueryableAsync()).FirstOrDefault(e => e.EndTime == null);
         if (updatedActivity != null)
         {
-            updatedActivity.Data += updatedActivity.Data.IsNullOrWhiteSpace() == false ? ", " : "";
-            updatedActivity.Data += $"'{processName}' killed manually at {DateTime.Now.ToString("HH:mm:ss")}";
+            updatedActivity.Data += updatedActivity.Data.IsNullOrWhiteSpace() == false ? "; " : "";
+            updatedActivity.Data += $"'{processName}' killed manually at {DateTime.Now:HH:mm:ss}";
             await _activityRecordRepository.UpdateAsync(updatedActivity);
         }
+    }
+
+    public async Task SendMessageAsync(string computerName, string message)
+    {
+        var supervisedComputer = (await _supervisedComputerRepository.GetQueryableNoTrackingAsync(false)).First(sc => sc.Name == computerName);
+        await _localEventBus.PublishAsync(new ShowMessageEto()
+        {
+            ConnectionId = supervisedComputer.ConnectionId,
+            Duration = 4,
+            Message = message
+        }, false);
     }
 }

@@ -9,6 +9,8 @@
     "LongWelcomeMessage": "Welcome to the application. This is a startup project based on the ABP framework. For more information visit",
     "Date": "Date",
     "Permission:Dashboard": "Dashboard",
+    "EnableAutokillReasoning": "Enable autokill reasoning",
+    "ClientHeartbeat": "Client heartbeat",
     "Menu:Dashboard": "Dashboard",
     "Menu:HomePage": "Home page",
     "Dashboard": "Dashboard",

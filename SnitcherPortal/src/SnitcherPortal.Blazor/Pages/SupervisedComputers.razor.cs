@@ -244,8 +244,7 @@ namespace SnitcherPortal.Blazor.Pages
             NewSupervisedComputer = new SupervisedComputerCreateDto
             {
                 BanUntil = DateTime.Now,
-
-
+                ClientHeartbeat = 10,
             };
             await NewSupervisedComputerValidations.ClearAll();
             await CreateSupervisedComputerModal.Show();
@@ -256,8 +255,6 @@ namespace SnitcherPortal.Blazor.Pages
             NewSupervisedComputer = new SupervisedComputerCreateDto
             {
                 BanUntil = DateTime.Now,
-
-
             };
             await CreateSupervisedComputerModal.Hide();
         }

@@ -88,7 +88,7 @@ namespace SnitcherPortal.SupervisedComputers
         public static IQueryable<SupervisedComputer> IncludeDetails(this IQueryable<SupervisedComputer> queryable)
         {
             return queryable
-                .Include(e => e.SnitchingLogs)
+                //.Include(e => e.SnitchingLogs) do not laod, they are historic records, must be handled sepparately
                 //.Include(e => e.ActivityRecords) do not laod, they are historic records, must be handled sepparately
                 .Include(e => e.Calendars)
                 .Include(e => e.KnownProcesses)

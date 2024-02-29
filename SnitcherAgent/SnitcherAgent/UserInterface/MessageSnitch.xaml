@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Style="{StaticResource WarningWindowStyle}"
         WindowStartupLocation="CenterScreen"
-        Height="auto" Width="auto" SizeToContent="WidthAndHeight">
+        Height="auto" Width="auto" SizeToContent="WidthAndHeight" Topmost="True">
 
     <Grid>
         <Grid.ColumnDefinitions>

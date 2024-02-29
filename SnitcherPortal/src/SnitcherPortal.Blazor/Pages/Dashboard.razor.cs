@@ -15,6 +15,8 @@ public partial class Dashboard
     public event EventHandler<DashboardDataDto>? OnDashboardChanged;
     private string? SelectedComputer { get; set; }
 
+    private string? MessageText { get; set; }
+
     protected override async Task OnInitializedAsync()
     {
         this.ComputerNames = await this.SupervisedComputersAppService.GetAvailableComputersAsync();
@@ -88,6 +90,22 @@ public partial class Dashboard
         {
             this.Model.ProcessList.RemoveAll(e => e.ProcessName.Contains(processName));
             this.StateHasChanged();
+        }
+    }
+
+    public async Task SendMessageAsync()
+    {
+        if (this.MessageText.IsNullOrWhiteSpace())
+        {
+            return;
+        }
+        try
+        {
+            await this.SupervisedComputersAppService.SendMessageAsync(this.SelectedComputer!, this.MessageText);
+        }
+        catch (Exception ex)
+        {
+            await this.HandleErrorAsync(ex);
         }
     }
 }

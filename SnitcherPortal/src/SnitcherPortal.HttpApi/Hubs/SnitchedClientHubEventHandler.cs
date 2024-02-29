@@ -8,7 +8,7 @@ using static EtoDefinitions;
 
 namespace SnitcherPortal.Hubs;
 
-public class SnitchedClientHubEventHandler : ILocalEventHandler<KillCommandEto>, ILocalEventHandler<ShowMessageEto>, ITransientDependency
+public class SnitchedClientHubEventHandler : ILocalEventHandler<KillCommandEto>, ILocalEventHandler<ShowMessageEto>, ILocalEventHandler<SetConfigurationEto>, ITransientDependency
 {
     private readonly ILogger<SnitchedClientHubEventHandler> _logger;
     private readonly IHubContext<SnitchedClientHub, ISnitchedClientHubClient> _hubContext;
@@ -38,6 +38,18 @@ public class SnitchedClientHubEventHandler : ILocalEventHandler<KillCommandEto>,
         try
         {
             await _hubContext.Clients.Client(eventData.ConnectionId!).ShowMessageReceived(eventData);
+        }
+        catch (Exception ex)
+        {
+            _logger.LogException(ex);
+        }
+    }
+
+    public async Task HandleEventAsync(SetConfigurationEto eventData)
+    {
+        try
+        {
+            await _hubContext.Clients.Client(eventData.ConnectionId!).SetConfiguration(eventData);
         }
         catch (Exception ex)
         {

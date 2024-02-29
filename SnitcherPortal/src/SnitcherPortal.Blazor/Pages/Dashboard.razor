@@ -44,6 +44,16 @@
     </Div>
 </Div>
 
+<Div Class="row mt-1">
+    <Div Class="col-11" Style="font-weight: bold">
+        <TextEdit @bind-Text="@this.MessageText" Style="background: white;">
+        </TextEdit>
+    </Div>
+    <Div Class="col-1" Style="font-weight: bold">
+        <Button Style="width: 100%;" Color="@Color.Secondary" Clicked="async (evt) => { await SendMessageAsync(); }">-></Button>
+    </Div>
+</Div>
+
 <Label Style="font-weight: bold" Class="mt-2">Running processes</Label>
 <hr style="margin-top: 0px; margin-bottom: 15px">
 @foreach (var process in this.Model.ProcessList)

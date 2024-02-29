@@ -21,8 +21,8 @@ namespace SnitcherPortal.SupervisedComputers
             _calendarManager = calendarManager;
         }
 
-        public virtual async Task<SupervisedComputer> CreateAsync(
-        string name, string identifier, bool isCalendarActive, string? connectionId = null, DateTime? banUntil = null)
+        public virtual async Task<SupervisedComputer> CreateAsync(string name, string identifier, bool isCalendarActive,
+            int clientHeartbeat, bool enableAutokillReasoning, string? connectionId = null, DateTime? banUntil = null)
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
             Check.Length(name, nameof(name), SupervisedComputerConsts.NameMaxLength, SupervisedComputerConsts.NameMinLength);
@@ -32,7 +32,9 @@ namespace SnitcherPortal.SupervisedComputers
 
             var supervisedComputer = new SupervisedComputer(GuidGenerator.Create(), name, identifier, isCalendarActive, connectionId, banUntil)
             {
-                Status = SupervisedComputerStatus.OFFLINE
+                Status = SupervisedComputerStatus.OFFLINE,
+                EnableAutokillReasoning = enableAutokillReasoning,
+                ClientHeartbeat = clientHeartbeat,
             };
 
             JsonSerializerOptions options = new() { WriteIndented = false };
@@ -75,7 +77,8 @@ namespace SnitcherPortal.SupervisedComputers
 
         public virtual async Task<SupervisedComputer> UpdateAsync(
             Guid id,
-            string name, string identifier, bool isCalendarActive, SupervisedComputerStatus status, string? connectionId = null, DateTime? banUntil = null, [CanBeNull] string? concurrencyStamp = null
+            string name, string identifier, bool isCalendarActive, SupervisedComputerStatus status,
+            int clientHeartbeat, bool enableAutokillReasoning, string? connectionId = null, DateTime? banUntil = null, [CanBeNull] string? concurrencyStamp = null
         )
         {
             Check.NotNullOrWhiteSpace(name, nameof(name));
@@ -92,6 +95,8 @@ namespace SnitcherPortal.SupervisedComputers
             supervisedComputer.ConnectionId = connectionId;
             supervisedComputer.Status = status;
             supervisedComputer.BanUntil = banUntil;
+            supervisedComputer.ClientHeartbeat = clientHeartbeat;
+            supervisedComputer.EnableAutokillReasoning = enableAutokillReasoning;
 
             supervisedComputer.SetConcurrencyStampIfNotNull(concurrencyStamp);
             return await _supervisedComputerRepository.UpdateAsync(supervisedComputer);

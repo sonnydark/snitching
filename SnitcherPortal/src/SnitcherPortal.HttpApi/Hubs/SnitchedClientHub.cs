@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using SnitcherPortal.SupervisedComputers;
 using System;
 using System.Threading.Tasks;
 using Volo.Abp.AspNetCore.SignalR;
@@ -13,16 +14,19 @@ public class SnitchedClientHub : AbpHub<ISnitchedClientHubClient>
 {
     private readonly ILogger<SnitchedClientHub> _logger;
     private readonly ILocalEventBus _localEventBus;
+    private readonly ISupervisedComputersAppService _supervisedComputersAppService;
 
     public SnitchedClientHub(ILogger<SnitchedClientHub> logger,
-        ILocalEventBus localEventBus)
+        ILocalEventBus localEventBus,
+        ISupervisedComputersAppService supervisedComputersAppService)
     {
         _logger = logger;
         _localEventBus = localEventBus;
+        _supervisedComputersAppService = supervisedComputersAppService;
     }
 
     public override async Task OnConnectedAsync()
-    {
+    {   
         string connectionId = Context.ConnectionId;
         await Clients.Client(connectionId).SetConfiguration(new SetConfigurationEto()
         {

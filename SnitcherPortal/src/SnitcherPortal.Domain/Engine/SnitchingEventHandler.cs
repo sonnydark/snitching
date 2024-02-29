@@ -1,10 +1,14 @@
 ﻿using Microsoft.Extensions.Logging;
+using Org.BouncyCastle.Tls;
+using Polly;
 using SnitcherPortal.ActivityRecords;
+using SnitcherPortal.Calendars;
 using SnitcherPortal.KnownProcesses;
 using SnitcherPortal.SnitchingLogs;
 using SnitcherPortal.SupervisedComputers;
 using System;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Volo.Abp.DependencyInjection;
 using Volo.Abp.EventBus;
@@ -71,7 +75,7 @@ namespace SnitcherPortal.Engine
                     dashboardDataDto = DashboardMapper
                         .Map(supervisedComputer, activityRecords.OrderByDescending(e => e.StartTime).Take(10).ToList(), null);
                 }
-                
+
                 await _localEventBus.PublishAsync(dashboardDataDto, false);
             }
             catch (Exception ex)
@@ -97,26 +101,28 @@ namespace SnitcherPortal.Engine
                     var supervisedComputer = (await _supervisedComputerRepository.WithDetailsAsync())
                         .FirstOrDefault(sc => sc.Identifier == eventData.MachineIdentifier);
 
-                    if (supervisedComputer == null)
-                    {
-                        supervisedComputer = await _supervisedComputerManager
-                            .CreateAsync("Autoregistered", eventData.MachineIdentifier!, true, "", null);
-                    }
+                    supervisedComputer ??= await _supervisedComputerManager
+                            .CreateAsync("Autoregistered", eventData.MachineIdentifier!, true, 10, false, "", null);
 
                     // Handle computer properties
                     supervisedComputer.Status = SupervisedComputerStatus.ONLINE;
+                    if (supervisedComputer.ConnectionId != eventData.ConnectionId)
+                    {
+                        await _localEventBus.PublishAsync(new SetConfigurationEto()
+                        {
+                            ConnectionId = eventData.ConnectionId,
+                            Heartbeat = supervisedComputer.ClientHeartbeat * 1000
+                        }, false);
+                    }
+
                     supervisedComputer.ConnectionId = eventData.ConnectionId;
 
                     // Handle snitching log
                     if (eventData.Logs?.Count > 0)
                     {
-                        eventData.Logs.ForEach(e =>
-                        {
-                            supervisedComputer.SnitchingLogs.Add(new SnitchingLog(Guid.NewGuid(), supervisedComputer.Id, DateTime.Now, e));
-                        });
+                        var snitchingLogs = eventData.Logs.Select(e => new SnitchingLog(Guid.NewGuid(), supervisedComputer.Id, DateTime.Now, e)).ToList();
+                        await _snitchingLogRepository.InsertManyAsync(snitchingLogs);
                     }
-                    var logsToRemove = supervisedComputer.SnitchingLogs.Where(e => e.Timestamp < DateTime.Now.AddDays(-7)).ToList();
-                    await _snitchingLogRepository.DeleteManyAsync(logsToRemove);
 
                     // Handle processes
                     if (eventData.Processes?.Count > 0)
@@ -151,19 +157,25 @@ namespace SnitcherPortal.Engine
 
                     if (activityRecord == null)
                     {
-                        activityRecord = new ActivityRecord(Guid.NewGuid(), supervisedComputer.Id, now, null, null);
-                        activityRecord.LastUpdateTime = now;
+                        activityRecord = new ActivityRecord(Guid.NewGuid(), supervisedComputer.Id, now, null, null)
+                        {
+                            LastUpdateTime = now
+                        };
                         activityRecords.Add(activityRecord);
                         await _activityRecordRepository.InsertAsync(activityRecord);
                     }
+
+                    // Handle calendar impliances
+                    await HandleProcessKillingAsync(eventData, supervisedComputer, activityRecord);
+
+                    // Map refresh UI event and commit changes
                     dashboardDataDto = DashboardMapper
                         .Map(supervisedComputer, activityRecords.OrderByDescending(e => e.StartTime).Take(10).ToList(), eventData.Processes);
 
-                    // Commit changes
                     await _supervisedComputerRepository.UpdateAsync(supervisedComputer);
                     await unitOfWork.CompleteAsync();
                 }
-                
+
                 await _localEventBus.PublishAsync(dashboardDataDto, false);
             }
             catch (Exception ex)
@@ -172,17 +184,125 @@ namespace SnitcherPortal.Engine
             }
         }
 
-        public async Task HandleProcessKillingAsync()
+        public async Task HandleProcessKillingAsync(SnitchingDataEto eventData, SupervisedComputer supervisedComputer, ActivityRecord activityRecord)
         {
-            //sem rovno param kvoli load times, ale save uz nie
-            // spravit toto po zobrazeni, mozno s delay XY s vlastnym await _localEventBus.PublishAsync(dashboardDataDto) .. potom to bude vyzerat ze preblikava?
+            var banList = supervisedComputer.KnownProcesses.Where(e => e.IsImportant).Select(e => e.Name).ToList();
+            var targetList = eventData!.Processes!.Where(p => banList.Any(b => p.Contains(b))).ToList();
 
-            //await _localEventBus.PublishAsync(new ShowMessageEto()
-            //{
-            //    ConnectionId = supervisedComputer.ConnectionId,
-            //    Duration = 1,
-            //    Message = "Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava.Toto je naozaj dlha sprava."
-            //}, false);
+            if (targetList.Count == 0)
+            {
+                return;
+            }
+
+            var now = DateTime.Now;
+            if (supervisedComputer.BanUntil.HasValue && supervisedComputer.BanUntil >= now)
+            {
+                activityRecord.Data += activityRecord.Data.IsNullOrWhiteSpace() == false ? "; " : "";
+                activityRecord.Data += $"'{string.Join(", ", targetList)}' killed based on BanUntil at {DateTime.Now:HH:mm:ss}";
+
+                await _localEventBus.PublishAsync(new KillCommandEto() { ConnectionId = supervisedComputer.ConnectionId, Processes = targetList }, false);
+
+                if (supervisedComputer.EnableAutokillReasoning)
+                {
+                    await _localEventBus.PublishAsync(new ShowMessageEto()
+                    {
+                        ConnectionId = supervisedComputer.ConnectionId,
+                        Duration = 4,
+                        Message = "Ukoncene kvoli nastaveniu obmedzenia BanUntil"
+                    }, false);
+                }
+                return;
+            }
+
+            var todaysCalendar = supervisedComputer.Calendars.FirstOrDefault(e => e.DayOfWeek == (int)now.DayOfWeek);
+            if (todaysCalendar == null || todaysCalendar.AllowedHours.IsNullOrEmpty())
+            {
+                return;
+            }
+
+            CalendarSettingsJson? calendarSettings;
+            try
+            {
+                calendarSettings = JsonSerializer.Deserialize<CalendarSettingsJson>(todaysCalendar.AllowedHours);
+                if (calendarSettings == null)
+                {
+                    return;
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogException(ex);
+                return;
+            }
+
+            var nowTimespan = new TimeSpan(now.Hour, now.Minute, now.Second);
+            if (!calendarSettings.Hours.Any(e => e.Start <= nowTimespan && e.End >= nowTimespan))
+            {
+                activityRecord.Data += activityRecord.Data.IsNullOrWhiteSpace() == false ? "; " : "";
+                activityRecord.Data += $"'{string.Join(", ", targetList)}' killed based on AllowedHours at {DateTime.Now:HH:mm:ss}";
+
+                await _localEventBus.PublishAsync(new KillCommandEto() { ConnectionId = supervisedComputer.ConnectionId, Processes = targetList }, false);
+
+                if (supervisedComputer.EnableAutokillReasoning)
+                {
+                    await _localEventBus.PublishAsync(new ShowMessageEto()
+                    {
+                        ConnectionId = supervisedComputer.ConnectionId,
+                        Duration = 4,
+                        Message = "Ukoncene kvoli nastaveniu obmedzenia AllowedHours"
+                    }, false);
+                }
+                return;
+            }
+
+            var records = (await _activityRecordRepository.GetQueryableNoTrackingAsync(false))
+                .Where(e => e.SupervisedComputerId == supervisedComputer.Id && (e.EndTime == null
+                || (e.EndTime > now.Date))).ToList();
+            double seconds = 0;
+            foreach (var record in records)
+            {
+                if (record.StartTime < now.Date)
+                {
+                    if (record.EndTime.HasValue)
+                    {
+                        seconds += (record.EndTime! - now.Date).Value.TotalSeconds;
+                    }
+                    else
+                    {
+                        seconds += (now - now.Date).TotalSeconds;
+                    }
+                }
+                else
+                {
+                    if (record.EndTime.HasValue)
+                    {
+                        seconds += (record.EndTime! - record.StartTime).Value.TotalSeconds;
+                    }
+                    else
+                    {
+                        seconds += (now - record.StartTime).TotalSeconds;
+                    }
+                }
+            }
+
+            if (calendarSettings.Quota * 60 * 60 < seconds)
+            {
+                activityRecord.Data += activityRecord.Data.IsNullOrWhiteSpace() == false ? "; " : "";
+                activityRecord.Data += $"'{string.Join(", ", targetList)}' killed based on AllowedHours at {DateTime.Now:HH:mm:ss}";
+
+                await _localEventBus.PublishAsync(new KillCommandEto() { ConnectionId = supervisedComputer.ConnectionId, Processes = targetList }, false);
+
+                if (supervisedComputer.EnableAutokillReasoning)
+                {
+                    await _localEventBus.PublishAsync(new ShowMessageEto()
+                    {
+                        ConnectionId = supervisedComputer.ConnectionId,
+                        Duration = 4,
+                        Message = "Ukoncene kvoli nastaveniu obmedzenia Quota"
+                    }, false);
+                }
+                return;
+            }
         }
 
         public async Task TriggerDashboardChangedAsync(DashboardDataDto data)
@@ -196,6 +316,6 @@ namespace SnitcherPortal.Engine
                 _logger.LogException(ex);
             }
         }
-        
+
     }
 }

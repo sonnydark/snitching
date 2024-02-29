@@ -1,6 +1,5 @@
 using System;
 using System.ComponentModel.DataAnnotations;
-using System.Collections.Generic;
 
 namespace SnitcherPortal.SupervisedComputers
 {
@@ -16,5 +15,7 @@ namespace SnitcherPortal.SupervisedComputers
         public string? ConnectionId { get; set; }
         public bool IsCalendarActive { get; set; }
         public DateTime? BanUntil { get; set; }
+        public int ClientHeartbeat { get; set; }
+        public bool EnableAutokillReasoning { get; set; }
     }
 }
