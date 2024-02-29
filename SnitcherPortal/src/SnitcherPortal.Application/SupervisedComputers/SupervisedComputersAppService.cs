@@ -100,6 +100,7 @@ public class SupervisedComputersAppService : ApplicationService, ISupervisedComp
     {
         var supervisedComputer = (await _supervisedComputerRepository.GetQueryableNoTrackingAsync(true)).First(sc => sc.Name == computerName);
         var activityRecords = (await _activityRecordRepository.GetQueryableNoTrackingAsync(false))
+            .Where(e => e.SupervisedComputerId == supervisedComputer.Id)
             .OrderByDescending(e => e.StartTime).Take(10).ToList();
         return DashboardMapper.Map(supervisedComputer, activityRecords, null);
     }
@@ -125,7 +126,7 @@ public class SupervisedComputersAppService : ApplicationService, ISupervisedComp
         await _localEventBus.PublishAsync(new ShowMessageEto()
         {
             ConnectionId = supervisedComputer.ConnectionId,
-            Duration = 4,
+            Duration = 5,
             Message = message
         }, false);
     }

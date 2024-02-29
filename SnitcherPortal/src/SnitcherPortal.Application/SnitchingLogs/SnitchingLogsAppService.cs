@@ -1,16 +1,10 @@
 using System;
-using System.IO;
-using System.Linq;
 using System.Collections.Generic;
 using System.Threading.Tasks;
-using System.Linq.Dynamic.Core;
 using Microsoft.AspNetCore.Authorization;
-using Volo.Abp;
 using Volo.Abp.Application.Dtos;
 using Volo.Abp.Application.Services;
-using Volo.Abp.Domain.Repositories;
 using SnitcherPortal.Permissions;
-using SnitcherPortal.SnitchingLogs;
 
 namespace SnitcherPortal.SnitchingLogs
 {

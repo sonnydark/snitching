@@ -137,6 +137,7 @@ namespace SnitcherPortal.Engine
                     // Handle activity records
                     var now = DateTime.Now;
                     var activityRecords = (await _activityRecordRepository.GetQueryableAsync())
+                        .Where(e => e.SupervisedComputerId == supervisedComputer.Id)
                         .OrderByDescending(e => e.StartTime).Take(10).ToList();
 
                     var activityRecord = activityRecords.FirstOrDefault(ar => ar.EndTime == null);
